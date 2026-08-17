@@ -1,0 +1,1810 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Crown Heights Sports</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2156;--navy-mid:#1a3a8f;--navy-light:#e8edf8;
+  --orange:#f47c20;--orange-light:#fff3eb;
+  --green:#1a8f4a;--green-light:#e8f5ee;
+  --gold:#c8a84b;--gold-light:#fdf6e3;
+  --opt:#7c3aed;--opt-light:#f3eeff;
+  --cancel:#e5e3dd;--cancel-txt:#999;
+  --cream:#f7f6f3;--dark:#1a1a18;--muted:#6b6b60;--border:#e0ddd6;--white:#fff;
+  --radius:12px;--shadow:0 3px 14px rgba(0,0,0,.08);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
+
+/* ── SCREENS ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ── HOME ── */
+.hero-wrap{position:relative;height:360px;overflow:hidden;background:var(--navy)}
+.hero-track{display:flex;height:360px;transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.hero-slide{flex-shrink:0;width:100%;height:360px;position:relative}
+.hero-slide img{width:100%;height:360px;object-fit:cover;display:block}
+.hero-slide:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(8,18,55,.82))}
+.hero-logo{position:absolute;top:20px;left:0;right:0;display:flex;justify-content:center;z-index:3}
+.hero-logo img{height:50px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.hero-inner{position:absolute;bottom:0;left:0;right:0;max-width:1200px;margin:0 auto;padding:2.5rem;z-index:2}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:.3rem}
+.hero-name{font-family:'DM Serif Display',serif;font-size:2.4rem;color:#fff;font-weight:400;line-height:1.15;margin-bottom:.3rem}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.75)}
+.hero-dots{position:absolute;bottom:18px;right:24px;display:flex;gap:6px;z-index:3}
+.hdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;padding:0;transition:all .25s}
+.hdot.on{background:#fff;width:22px;border-radius:4px}
+.season-strip{background:var(--navy);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.ss-text{font-size:13px;font-weight:600;color:#fff}
+.ss-badge{font-size:11px;background:var(--orange);color:#fff;padding:3px 14px;border-radius:999px;font-weight:600}
+.home-content{max-width:1200px;margin:0 auto;padding:2.5rem 2rem 4rem}
+.sec-head{margin-bottom:1rem;margin-top:1rem;padding-bottom:.6rem;border-bottom:1.5px solid var(--border)}
+.sec-title{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--navy);font-weight:400}
+.prog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:2.5rem}
+.prog-card{border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;aspect-ratio:4/5;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s}
+.prog-card:hover{transform:translateY(-5px);box-shadow:0 10px 28px rgba(0,0,0,.15)}
+.prog-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.prog-card:hover img{transform:scale(1.04)}
+.prog-card:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(8,18,55,.88) 100%)}
+.prog-info{position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1rem;z-index:2}
+.prog-name{font-family:'DM Serif Display',serif;font-size:1.15rem;color:#fff;font-weight:400;margin-bottom:4px;line-height:1.2}
+.prog-day{font-size:12px;color:rgba(255,255,255,.72);margin-bottom:.5rem}
+.prog-pill{display:inline-block;background:var(--orange);color:#fff;font-size:11px;font-weight:600;padding:3px 11px;border-radius:999px}
+
+/* ── PRODUCT PAGE ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.back-btn{background:none;border:none;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px}
+.topbar-title{font-size:14px;font-weight:600;color:var(--navy)}
+.product-wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.gallery-wrap{position:relative;width:100%;height:340px;border-radius:var(--radius);overflow:hidden;background:#0f2156;margin-bottom:1.5rem}
+.gtrack{display:flex;height:340px;transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.gslide{flex-shrink:0;width:100%;height:340px;object-fit:contain;background:#0f2156}
+.garr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(15,33,86,.5);backdrop-filter:blur(4px);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.garr.prev{left:12px}.garr.next{right:12px}
+.gdots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.gdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);border:none;cursor:pointer;padding:0;transition:all .2s}
+.gdot.on{background:#fff;width:20px;border-radius:4px}
+.prod-title{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--navy);font-weight:400;margin-bottom:.25rem}
+.prod-tagline{font-size:14px;color:var(--muted);margin-bottom:1.25rem}
+.prod-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.25rem;gap:4px}
+.prod-tab{padding:.6rem 1.1rem;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.prod-tab.on{color:var(--navy);border-bottom-color:var(--navy);font-weight:600}
+.prod-panel{display:none}.prod-panel.on{display:block}
+.hl-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem}
+.hl-item{background:#fff;border:1px solid #e0ddd6;border-radius:999px;padding:.4rem .9rem;font-size:13px;display:flex;align-items:center;gap:7px;color:#1a1a18;font-weight:500;white-space:nowrap}
+.prod-desc{font-size:14px;color:#333;line-height:1.75;margin-bottom:.9rem}
+.commit-box{background:var(--navy-light);border-left:3px solid var(--navy);padding:.8rem 1rem;border-radius:0 8px 8px 0;font-size:13px;line-height:1.65;color:#333;margin-bottom:.9rem}
+.award-row{display:flex;align-items:center;gap:8px;padding:.65rem 0;border-bottom:.5px solid var(--border);font-size:14px}
+.award-row:last-child{border-bottom:none}
+.prod-cta{background:var(--white);border-top:1px solid var(--border);padding:1.1rem 1.5rem;position:sticky;bottom:0;display:flex;align-items:center;gap:12px}
+.cta-main{flex:1;background:var(--orange);color:#fff;border:none;border-radius:var(--radius);padding:.9rem;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.cta-main:hover{background:#d96a12}
+.cta-trial{font-size:12px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;text-decoration:underline;white-space:nowrap}
+.cta-note{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* ── FORM (step 2) ── */
+.form-wrap{max-width:720px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.form-section-title{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--navy);font-weight:400;margin-bottom:.25rem}
+.form-section-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:5px}
+input[type=text],input[type=email]{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--dark);background:var(--white);outline:none;transition:border-color .15s}
+input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)}
+.field{margin-bottom:.9rem}.field:last-child{margin-bottom:0}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Calendar */
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dot{width:13px;height:13px;border-radius:3px;flex-shrink:0}
+.dot-game{background:var(--green-light);border:1.5px solid var(--green)}
+.dot-cancel{background:var(--cancel)}
+.dot-opt{background:var(--opt-light);border:1.5px solid var(--opt)}
+.dot-best{background:var(--gold-light);border:1.5px solid var(--gold)}
+.dot-selected{background:var(--navy)}
+.month-block{margin-bottom:4px}
+.month-block-header{display:grid;grid-template-columns:88px 1fr;align-items:center;gap:6px;margin-bottom:5px}
+.month-lbl{font-size:11px;font-weight:600;color:var(--muted);text-align:right;padding-right:10px;letter-spacing:.03em}
+.month-btn{width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;text-align:left;transition:all .15s;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.month-btn:hover{border-color:var(--navy-mid);background:var(--navy-light)}
+.month-btn.best{background:var(--gold-light);border-color:var(--gold);color:#7a5e1a}
+.month-btn.selected{background:var(--navy);border-color:var(--navy);color:#fff}
+.month-btn.best.selected{background:var(--gold);border-color:var(--gold);color:#3a2800}
+.btn-l{display:flex;flex-direction:column;gap:1px}
+.btn-name{font-size:12px;font-weight:600}
+.btn-sub{font-size:10px;opacity:.8}
+.btn-price{font-size:13px;font-weight:600;white-space:nowrap}
+.month-games{display:flex;flex-wrap:wrap;gap:5px;padding-left:94px;margin-bottom:4px}
+.day-cell{width:44px;height:44px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.day-game{background:var(--green-light);color:var(--green)}
+.day-cancel{background:var(--cancel);color:var(--cancel-txt)}
+.day-num{font-size:12px;font-weight:600;line-height:1}
+.day-tag{font-size:8px;line-height:1.2;margin-top:1px;text-align:center;max-width:42px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+.opt-strip{background:var(--opt-light);border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:7px 12px;margin:6px 0 6px 94px;font-size:12px;color:#5b21b6;display:flex;align-items:center;gap:8px}
+.opt-strip strong{color:#4c1d95}
+.month-divider{height:1px;background:var(--border);margin:6px 0 8px 94px}
+.pricing-summary{display:none;margin-top:1.25rem;border-top:1px solid var(--border);padding-top:1.25rem}
+.pricing-summary.vis{display:block}
+.summary-title{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--navy);margin-bottom:.6rem}
+.opt-note{font-size:12px;color:#5b21b6;background:var(--opt-light);border-radius:8px;padding:8px 12px;margin-bottom:.75rem}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option-btn{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:.9rem 1rem;cursor:pointer;text-align:left;transition:all .15s;position:relative;font-family:'DM Sans',sans-serif}
+.option-btn:hover{border-color:var(--navy-mid)}
+.option-btn.selected{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,33,86,.1)}
+.opt-lbl{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.opt-price{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--navy);line-height:1;margin-bottom:2px}
+.opt-detail{font-size:11px;color:var(--muted)}
+.check-mark{position:absolute;top:8px;right:8px;width:16px;height:16px;background:var(--navy);border-radius:50%;display:none;align-items:center;justify-content:center}
+.option-btn.selected .check-mark{display:flex}
+.check-mark svg{width:8px;height:8px;stroke:#fff;stroke-width:2.5;fill:none}
+
+/* Payment */
+#stripe-element{border:1px solid var(--border);border-radius:8px;padding:11px 13px;background:var(--white)}
+#stripe-element.StripeElement--focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(15,33,86,.1)}
+#card-errors{color:#c0392b;font-size:13px;margin-top:6px;min-height:16px}
+.pay-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:1rem;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1rem}
+.pay-btn:hover{background:var(--navy-mid)}
+.pay-btn:disabled{background:#aaa;cursor:not-allowed}
+.secure-note{text-align:center;font-size:12px;color:var(--muted);margin-top:.6rem;display:flex;align-items:center;justify-content:center;gap:5px}
+.secure-note svg{width:11px;height:11px;stroke:var(--muted);fill:none;stroke-width:2}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Success */
+.success-wrap{text-align:center;padding:4rem 2rem}
+.success-check{width:72px;height:72px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem}
+.success-wrap h2{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--green);margin-bottom:.5rem;font-weight:400}
+.success-wrap p{color:var(--muted);font-size:15px;line-height:1.7}
+
+/* Trial modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-bg.vis{display:flex}
+.modal-box{background:var(--white);border-radius:var(--radius);padding:2rem;max-width:480px;width:90%}
+.modal-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--navy);margin-bottom:.5rem;font-weight:400}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:1rem}
+.modal-info{font-size:13px;color:#333;line-height:1.7;margin-bottom:1.25rem}
+.modal-close{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1}
+
+@media(max-width:860px){.prog-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.prog-grid{grid-template-columns:1fr}.hl-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem}.field-row{grid-template-columns:1fr}.options-grid{grid-template-columns:1fr}}
+
+.icon-badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin-bottom:1.5rem;max-width:100%}
+.icon-badge{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:.85rem .75rem;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.icon-badge-img svg{width:52px;height:52px;flex-shrink:0;display:block}
+.icon-badge-label{font-size:11px;font-weight:500;color:#1a1a18;line-height:1.4}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.photo-grid img{width:100%;height:200px;object-fit:cover;border-radius:10px;display:block}
+.photo-grid img.full{grid-column:1/-1;height:260px}
+
+
+.icon-badge.bus-badge{background:#e8f5e8;border-color:#1a8f4a}
+.icon-badge.bus-badge .icon-badge-label{color:#1a5c1a;font-weight:600}
+
+
+.sticker-award-row{background:linear-gradient(135deg,#fff8e8,#fff3cc);border:2px dashed #f47c20;border-radius:12px;padding:.85rem 1rem;margin-bottom:6px;display:flex;align-items:center;gap:12px}
+.sticker-award-text{font-weight:600;color:#0f2156;font-size:15px}
+.sticker-award-sub{font-size:12px;color:#6b6b60;margin-top:2px}
+
+
+.schedule-block{padding:.25rem 0}
+.schedule-row{display:flex;align-items:flex-start;gap:12px;padding:.7rem 0;border-bottom:.5px solid var(--border)}
+.schedule-row:last-of-type{border-bottom:none}
+.sched-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center;margin-top:1px}
+.schedule-row strong{font-size:14px;color:#1a1a18;display:block;line-height:1.4}
+.sched-sub{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+.schedule-note{background:var(--navy-light);border-left:3px solid var(--navy);padding:.75rem 1rem;border-radius:0 8px 8px 0;font-size:13px;color:#333;line-height:1.65;margin-top:.75rem}
+
+.footnote{font-size:12px;color:var(--muted);margin-top:.75rem;padding-top:.75rem;border-top:.5px solid var(--border);line-height:1.6}
+
+.price-now-wrap{margin-bottom:1.25rem}
+.price-now-main{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--navy);font-weight:400;line-height:1;transition:color .3s}
+.price-now-main.bus-added{color:var(--orange)}
+.price-now-detail{font-size:13px;color:var(--muted);margin-top:.3rem}
+.price-now-total{font-size:14px;font-weight:600;color:var(--navy);margin-top:.4rem}
+.bus-toggle-card{background:#f0faf4;border:1.5px solid #1a8f4a;border-radius:10px;padding:.85rem 1rem;margin-bottom:1rem;transition:all .3s}
+.bus-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bus-slider-wrap{position:relative;width:44px;height:24px;flex-shrink:0}
+.bus-slider-wrap input{opacity:0;width:0;height:0}
+.bus-slider{position:absolute;inset:0;background:#ccc;border-radius:999px;cursor:pointer;transition:.3s}
+.bus-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.bus-slider-wrap input:checked+.bus-slider{background:#1a8f4a}
+.bus-slider-wrap input:checked+.bus-slider:before{transform:translateX(20px)}
+.breakdown-box{background:var(--cream);border-radius:10px;padding:.85rem 1rem;font-size:13px;margin-bottom:.25rem}
+.bkd-row{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:.5px solid var(--border);color:#333}
+.bkd-row:last-child{border-bottom:none;font-weight:700;color:var(--navy);padding-top:.5rem}
+.bkd-row.bus{color:#1a8f4a}
+
+
+.pricing-expand-wrap{margin-top:.75rem}
+.pricing-expand-btn{width:100%;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--navy-light);border-radius:8px;transition:background .15s}
+.pricing-expand-btn:hover{background:#dce3f5}
+.pricing-expand-btn .arrow{transition:transform .3s;font-size:11px}
+.pricing-expand-btn.open .arrow{transform:rotate(180deg)}
+.pricing-expand-body{display:none;margin-top:.75rem}
+.pricing-expand-body.vis{display:block}
+
+
+.scholarship-link{display:block;text-align:center;font-size:12px;color:var(--muted);margin-top:.75rem;cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'DM Sans',sans-serif;width:100%}
+.scholarship-link:hover{color:var(--navy)}
+.scholarship-panel{display:none;margin-top:1rem;background:#fdf8f3;border:1px solid #f0dcc8;border-radius:10px;padding:1.25rem}
+.scholarship-panel.vis{display:block}
+.scholarship-notice{background:#fff8e8;border-left:3px solid #c8a84b;padding:.7rem .9rem;border-radius:0 8px 8px 0;font-size:13px;color:#7a5e1a;line-height:1.65;margin-bottom:1rem}
+.scholarship-submit{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:.8rem;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.75rem}
+.scholarship-success{display:none;text-align:center;padding:1rem;font-size:14px;color:#1a8f4a;font-weight:600}
+
+
+.session-selector{background:#e8f0fe;border:1.5px solid #1a3a8f;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem}
+.session-selector-title{font-size:13px;font-weight:600;color:#0f2156;margin-bottom:.75rem}
+.session-btns{display:flex;gap:8px;flex-wrap:wrap}
+.session-btn{padding:.5rem 1.1rem;border-radius:8px;border:1.5px solid #1a3a8f;background:#fff;font-size:13px;font-weight:500;color:#0f2156;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.session-btn.on{background:#0f2156;color:#fff;border-color:#0f2156}
+
+</style>
+</head>
+<body>
+
+<!-- ── SCREEN 1: HOME ── -->
+<!-- Hidden Netlify Form for scholarship detection -->
+<form name="scholarship-waitlist" netlify netlify-honeypot="bot-field" hidden>
+  <input name="parent-name" type="text">
+  <input name="child-name" type="text">
+  <input name="program" type="text">
+  <input name="email" type="email">
+</form>
+
+<div class="screen active" id="screenHome">
+  <div class="season-strip">
+    <span class="ss-text">2026–2027 Season — Registration is now open</span>
+    <span class="ss-badge">September → June</span>
+  </div>
+  
+  <!-- TRIAL CLASS HERO BANNER -->
+  <div id="trialBanner" style="background:linear-gradient(135deg,#0f2156 0%,#1a3a8f 50%,#f47c20 100%);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+    <div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:#fff;font-weight:400;margin-bottom:.2rem">Not sure yet? Try a class first</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.75)">One session &middot; No commitment &middot; $20 flat fee</div>
+    </div>
+    <button onclick="openTrialInline()" style="background:#fff;color:#0f2156;border:none;border-radius:10px;padding:.7rem 1.5rem;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0">Book a trial class &rarr;</button>
+  </div>
+
+  <!-- TRIAL INLINE PANEL (shows in-place, no scroll) -->
+  <div id="trialInlinePanel" style="display:none;background:#fff;border-bottom:1px solid #e8e5df;padding:1.5rem 2rem">
+    <div style="max-width:600px;margin:0 auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#0f2156">Book a trial class &mdash; $20</div>
+        <button onclick="closeTrialInline()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;font-family:'DM Sans',sans-serif">&times;</button>
+      </div>
+      <div style="font-size:13px;color:#6b6b60;margin-bottom:1rem;line-height:1.65">One trial per child &middot; No transportation included &middot; Must be booked at least 24 hours before the session &middot; Older groups: until mid-October only</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Child's name</label><input type="text" id="trialInlineChild" placeholder="Moshe Cohen" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Child's grade</label><select id="trialInlineGrade" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Program to try</label><select id="trialInlineProgram" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option><option>Girls Basketball</option></select></div>
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Parent email</label><input type="email" id="trialInlineEmail" placeholder="rivka@email.com" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+      </div>
+      <div id="trial-inline-stripe" style="border:1px solid #e8e5df;border-radius:8px;padding:10px 12px;margin-bottom:.75rem;background:#fff"></div>
+      <div id="trial-inline-errors" style="color:#c0392b;font-size:13px;margin-bottom:.5rem;min-height:16px"></div>
+      <button id="trialInlinePayBtn" onclick="handleTrialInlinePayment()" style="width:100%;background:#0f2156;color:#fff;border:none;border-radius:10px;padding:.85rem;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span id="trialInlineLabel">Book trial class &mdash; $20</span>
+        <div id="trialInlineSpinner" style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>
+      </button>
+      <div id="trialInlineSuccess" style="display:none;text-align:center;padding:1rem">
+        <div style="font-size:24px;margin-bottom:.5rem">&#10003;</div>
+        <div style="font-weight:600;color:#1a8f4a">You're booked! We'll be in touch with details.</div>
+      </div>
+    </div>
+  </div>
+  <div class="home-content">
+    <div class="sec-head"><span class="sec-title">Soccer Programs</span></div>
+    <div class="prog-grid" id="soccerGrid"></div>
+    <div class="sec-head"><span class="sec-title">Basketball Programs</span></div>
+    <div class="prog-grid" id="bballGrid"></div>
+
+
+  </div>
+</div>
+
+<!-- ── SCREEN 2: PRODUCT PAGE ── -->
+<div class="screen" id="screenProduct">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">← Programs</button>
+    <span class="topbar-title" id="topbarTitle"></span>
+  </div>
+  <div class="product-wrap">
+    <div id="productContent"></div>
+  </div>
+  <div class="prod-cta" id="prodCta">
+    <button class="cta-main" onclick="goForm()">Sign me up!</button>
+    <button class="cta-trial" onclick="openTrial()">Try a class — $20</button>
+    <span class="cta-note" id="ctaOptDate"></span>
+  </div>
+</div>
+
+<!-- ── SCREEN 3: REGISTRATION FORM ── -->
+<div class="screen" id="screenForm">
+  <div class="topbar">
+    <button class="back-btn" onclick="goProduct()">← Back</button>
+    <span class="topbar-title" id="formTopbarTitle"></span>
+  </div>
+  <div class="form-wrap">
+    <div id="formContent">
+      <div class="card">
+        <div class="card-title">Child & parent information</div>
+        <div class="field-row">
+          <div class="field"><label>Child's first name</label><input type="text" id="childFirst" placeholder="Moshe"></div>
+          <div class="field"><label>Child's last name</label><input type="text" id="childLast" placeholder="Cohen"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Parent / guardian name</label><input type="text" id="parentName" placeholder="Rivka Cohen"></div>
+          <div class="field"><label>Email address</label><input type="email" id="parentEmail" placeholder="rivka@email.com"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>WhatsApp number</label>
+            <input type="tel" id="whatsappNumber" placeholder="(718) 000-0000" style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none">
+            <div style="font-size:11px;color:#6b6b60;margin-top:4px">Used to add you to the program WhatsApp group</div>
+          </div>
+          <div class="field" style="display:flex;align-items:flex-end"><div style="font-size:12px;color:#6b6b60;padding-bottom:4px">&#128241; Make sure this number has WhatsApp</div></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Child's grade</label>
+            <select id="childGrade" style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none;background:#fff">
+              <option value="">Select grade...</option>
+              <option>Toddler (Age 3–5)</option>
+              <option>Pre-1A</option>
+              <option>1st Grade</option>
+              <option>2nd Grade</option>
+              <option>3rd Grade</option>
+              <option>4th Grade</option>
+              <option>5th Grade</option>
+              <option>6th Grade</option>
+              <option>7th Grade</option>
+              <option>8th Grade</option>
+              <option>Adult</option>
+            </select>
+          </div>
+          <div class="field"><label>Jersey size</label>
+            <select id="jerseySize" style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none;background:#fff">
+              <option value="">Select size...</option>
+              <option>2T</option><option>3T</option><option>4T</option>
+              <option>YS</option><option>YM</option><option>YL</option><option>YXL</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+              <option>2XL</option><option>3XL</option><option>4XL</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Your pricing — joining now</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:1rem;line-height:1.6;background:#e8edf8;padding:.6rem .85rem;border-radius:6px;">
+          &#9432; Pricing is <strong>prorated</strong> based on the number of sessions remaining from today. The earlier you join, the more sessions you get — and the better the per-session rate.
+        </p>
+        <!-- Session selector - Boys Soccer only -->
+        <div class="session-selector" id="sessionSelector" style="display:none">
+          <div class="session-selector-title">⚽ Which session(s) would you like to register for?</div>
+          <div class="session-btns">
+            <button class="session-btn" id="sess-sun" onclick="selectSession('Sunday')">Sundays</button>
+            <button class="session-btn" id="sess-wed" onclick="selectSession('Wednesday')">Wednesdays</button>
+            <button class="session-btn" id="sess-both" onclick="selectSession('Both')">Both (Sunday &amp; Wednesday)</button>
+          </div>
+          <div id="sessionNote" style="font-size:12px;color:#1a3a8f;margin-top:.6rem;display:none"></div>
+        </div>
+        <div class="price-now-wrap">
+          <div class="price-now-main" id="priceNowMain"></div>
+          <div class="price-now-detail" id="priceNowDetail"></div>
+          <div class="price-now-total" id="priceNowTotal"></div>
+        </div>
+
+        <!-- Bus toggle (Boys Soccer only) -->
+        <div class="bus-toggle-card" id="busToggleCard" style="display:none">
+          <div class="bus-toggle-row">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:22px">🚌</span>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#1a1a18">Add bus transportation</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">Corner pickup &amp; drop-off · Crown Heights, East Flatbush &amp; Remsen Village · +$20/mo</div>
+              </div>
+            </div>
+            <label class="bus-slider-wrap">
+              <input type="checkbox" id="busToggleInput" onchange="updatePricingDisplay()">
+              <span class="bus-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="breakdown-box" id="breakdownBox"></div>
+
+        <div style="margin-top:1rem">
+          <div class="card-title" style="margin-bottom:.75rem">Payment plan</div>
+          <div class="options-grid">
+            <button class="option-btn" id="optMonthly" onclick="selectPayment('monthly')">
+              <div class="check-mark"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1"/></svg></div>
+              <div class="opt-lbl">Monthly plan</div>
+              <div class="opt-price" id="monthlyPrice">—</div>
+              <div class="opt-detail" id="monthlyDetail">—</div>
+            </button>
+            <button class="option-btn" id="optLump" onclick="selectPayment('lump')">
+              <div class="check-mark"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1"/></svg></div>
+              <div class="opt-lbl">Pay in full <span style="background:#1a8f4a;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:999px;letter-spacing:.05em;vertical-align:middle">SAVE 5%</span></div>
+              <div class="opt-price" id="lumpPrice">—</div>
+              <div class="opt-detail" id="lumpDetail">—</div>
+              <div style="font-size:10px;color:#c0392b;margin-top:6px;line-height:1.5">&#9888; <strong>Non-refundable.</strong> By paying in full you waive all opt-out dates. No cancellations or refunds will be issued for any reason.</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scholarship -->
+      <button class="scholarship-link" onclick="toggleScholarship()">Apply for scholarship or financial assistance</button>
+      <div class="scholarship-panel" id="scholarshipPanel">
+        <div class="scholarship-notice">
+          &#9888; <strong>No spot is guaranteed</strong> until a full registration is completed. Submitting this does not reserve a place in the program. Full registrations take priority.
+        </div>
+
+        <!-- Step 1: Collect info (saved to Netlify) -->
+        <div id="scholarshipStep1">
+          <p style="font-size:13px;color:#333;line-height:1.7;margin-bottom:1rem">Please fill in your details first, then we will direct you to the scholarship application.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem">
+            <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:4px">Parent name</label>
+              <input type="text" id="schlParentName" placeholder="Rivka Cohen" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+            <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:4px">Child's name</label>
+              <input type="text" id="schlChildName" placeholder="Moshe Cohen" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem">
+            <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:4px">Program</label>
+              <select id="schlProgram" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18">
+                <option value="">Select program...</option>
+                <option>Toddler Soccer</option>
+                <option>Boys Soccer — Sunday</option>
+                <option>Boys Soccer — Wednesday</option>
+                <option>Boys Soccer — Both</option>
+                <option>Girls Soccer</option>
+                <option>Boys Basketball</option>
+                <option>Girls Basketball</option>
+              </select></div>
+            <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:4px">Email address</label>
+              <input type="email" id="schlEmail" placeholder="rivka@email.com" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+          </div>
+          <div id="schlError" style="color:#c0392b;font-size:12px;margin-bottom:.5rem;min-height:14px"></div>
+          <button onclick="submitScholarshipStep1()" style="width:100%;background:#0f2156;color:#fff;border:none;border-radius:10px;padding:.8rem;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Continue &rarr;</button>
+        </div>
+
+        <!-- Step 2: Redirect to Google Form -->
+        <div id="scholarshipStep2" style="display:none;text-align:center">
+          <div style="font-size:22px;margin-bottom:.5rem">&#10003;</div>
+          <div style="font-weight:600;color:#0f2156;margin-bottom:.5rem">Got it! One more step.</div>
+          <p style="font-size:13px;color:#555;line-height:1.65;margin-bottom:1rem">Please complete the scholarship application through our partner organization. Your info has been saved on our end.</p>
+          <a href="https://forms.gle/ZsemFPNYqdd253dVA" target="_blank"
+             style="display:block;width:100%;background:#f47c20;color:#fff;text-align:center;padding:.85rem;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif">
+            Open scholarship application &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Expandable pricing calendar -->
+      <div class="pricing-expand-wrap">
+        <button class="pricing-expand-btn" id="expandBtn" onclick="togglePricingExpand()">
+          <span>🗓 Want to understand how our pricing works?</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="pricing-expand-body" id="pricingExpandBody">
+          <div class="card" style="margin-top:.75rem">
+            <div class="card-title" style="margin-bottom:.75rem">Pricing by start month</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.65">
+              We charge based on how many sessions remain when you join. The earlier you sign up, the more sessions you get. Pricing is calculated per session, so latecomers pay less in total but at a slightly higher per-session rate.
+            </p>
+
+            <div id="calendarGrid"></div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="card" id="paymentCard" style="display:none">
+        <div class="card-title">Payment</div>
+        <div class="field">
+          <label>Card details</label>
+          <div id="stripe-element"></div>
+          <div id="card-errors"></div>
+        </div>
+        <button class="pay-btn" id="payBtn" onclick="handlePayment()" disabled>
+          <span id="payLabel">Complete registration</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <p class="secure-note">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Secured by Stripe
+        </p>
+      </div>
+    </div>
+
+    <div id="successContent" style="display:none">
+      <div class="success-wrap">
+        <div class="success-check"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a8f4a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2>You're registered!</h2>
+        <p id="successMsg"></p>
+        <div id="successWhatsAppWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TRIAL MODAL ── -->
+<div class="modal-bg" id="trialModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeTrial()">&#215;</button>
+    <div class="modal-title">Try a class &#8212; $20</div>
+    <div class="modal-sub" id="trialProgName">One session, no commitment</div>
+    <div class="modal-info">
+      Not ready to commit to the full year? Try a single session and see if it's the right fit.<br><br>
+      <strong>Things to know:</strong> One trial per child &middot; No transportation included &middot;
+      Spot not guaranteed &mdash; full registration secures your place &middot;
+      Must be booked at least 24 hours before the session &middot;
+      Older groups: trial only available until mid-October
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+      <div class="field-row" style="margin-bottom:.75rem">
+        <div class="field"><label>Child's name</label><input type="text" id="trialChildName" placeholder="Moshe Cohen"></div>
+        <div class="field"><label>Child's grade</label><select id="trialChildGrade" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
+      </div>
+      <div class="field-row" style="margin-bottom:.75rem">
+        <div class="field"><label>Program to try</label><select id="trialProgSelect" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option><option>Girls Basketball</option></select></div>
+        <div class="field"><label>Parent email</label><input type="email" id="trialEmail" placeholder="rivka@email.com"></div>
+      </div>
+      <div id="trial-stripe-element" style="border:1px solid var(--border);border-radius:8px;padding:11px 13px;background:var(--white);margin-bottom:.75rem"></div>
+      <div id="trial-card-errors" style="color:#c0392b;font-size:13px;margin-bottom:.5rem;min-height:16px"></div>
+      <button class="cta-main" id="trialPayBtn" onclick="handleTrialPayment()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span id="trialPayLabel">Book trial class &#8212; $20</span>
+        <div class="spinner" id="trialSpinner"></div>
+      </button>
+      <div id="trialSuccess" style="display:none;text-align:center;padding:1rem">
+        <div style="font-size:24px;margin-bottom:.5rem">&#10003;</div>
+        <div style="font-weight:600;color:var(--green);margin-bottom:.25rem">You're booked!</div>
+        <div style="font-size:13px;color:var(--muted)">We'll be in touch with session details.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROG_FEATURES = {
+  'toddler-soccer': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Sundays 10-11am</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">Socceroof Crown Heights</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
+  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
+  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
+  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Ages 3-5, Boys & Girls</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,6 L45,22 L58,14 L52,28 L68,28 L56,38 L62,54 L48,46 L40,60 L32,46 L18,54 L24,38 L12,28 L28,28 L22,14 L35,22 Z" fill="#f47c20"/>
+  <path d="M40,14 L44,24 L54,19 L50,29 L62,29 L53,36 L58,48 L47,42 L40,52 L33,42 L22,48 L27,36 L18,29 L30,29 L26,19 L36,24 Z" fill="#ffd700"/>
+  <circle cx="40" cy="33" r="11" fill="#0f2156"/>
+  <text x="40" y="38" font-family="Arial Black" font-size="10" font-weight="900" fill="#ffd700" text-anchor="middle">WOW!</text>
+</svg></div><div class=\"icon-badge-label\">Weekly sticker for every player!</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="34" y="8" width="12" height="22" rx="3" fill="#f47c20"/>
+  <polygon points="40,10 44,22 52,22 46,28 48,36 40,31 32,36 34,28 28,22 36,22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="18" fill="#ffd700"/>
+  <circle cx="40" cy="52" r="14" fill="#f47c20"/>
+  <text x="40" y="57" font-family="Arial Black" font-size="13" font-weight="900" fill="white" text-anchor="middle">1ST</text>
+</svg></div><div class=\"icon-badge-label\">Medal at end of year ceremony</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="28" cy="20" r="11" fill="#0f2156"/>
+  <path d="M10,54 C10,42 18,35 28,35 C38,35 46,42 46,54 L46,62 L10,62 Z" fill="#0f2156"/>
+  <circle cx="56" cy="44" r="8" fill="#f47c20"/>
+  <path d="M44,64 C44,56 49,51 56,51 C63,51 68,56 68,64 L68,70 L44,70 Z" fill="#f47c20"/>
+  <path d="M44,46 C42,43 40,38 42,35 C44,30 50,30 52,35" fill="none" stroke="#f47c20" stroke-width="2.5" stroke-linecap="round"/>
+</svg></div><div class=\"icon-badge-label\">Parental supervision requested</div></div>`,
+  'boys-soccer': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Offered twice a week*</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">Socceroof Crown Heights</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
+  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
+  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
+  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Pre-1A to 8th grade</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="18" r="12" fill="#0f2156"/>
+  <path d="M18,52 C18,38 28,32 40,32 C52,32 62,38 62,52 L62,60 L18,60 Z" fill="#0f2156"/>
+  <rect x="34" y="48" width="12" height="3" rx="1.5" fill="#f47c20"/>
+  <rect x="37" y="44" width="6" height="8" rx="1" fill="#f47c20"/>
+  <circle cx="58" cy="52" r="10" fill="#f47c20"/>
+  <text x="58" y="56" font-family="Arial Black" font-size="11" font-weight="900" fill="white" text-anchor="middle">!</text>
+</svg></div><div class=\"icon-badge-label\">Dedicated coach per age</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" width="52" height="52">
+  <rect x="6" y="24" width="80" height="34" rx="4" fill="#f47c20"/>
+  <rect x="10" y="16" width="72" height="12" rx="4" fill="#f47c20"/>
+  <rect x="6" y="36" width="80" height="6" fill="#1a1a18"/>
+  <rect x="14" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="32" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="50" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="82" y="24" width="12" height="34" rx="0" fill="#e8a000"/>
+  <rect x="83" y="27" width="9" height="12" rx="2" fill="#e8edf8"/>
+  <rect x="84" y="50" width="8" height="5" rx="2" fill="#fff9c4"/>
+  <rect x="82" y="56" width="14" height="4" rx="2" fill="#0f2156"/>
+  <rect x="4" y="34" width="3" height="10" rx="1" fill="#0f2156"/>
+  <rect x="66" y="29" width="10" height="18" rx="1" fill="#d96a00"/>
+  <line x1="71" y1="29" x2="71" y2="47" stroke="#f47c20" stroke-width="1"/>
+  <circle cx="24" cy="60" r="9" fill="#1a1a18"/><circle cx="24" cy="60" r="5" fill="#888"/><circle cx="24" cy="60" r="2" fill="#1a1a18"/>
+  <circle cx="66" cy="60" r="9" fill="#1a1a18"/><circle cx="66" cy="60" r="5" fill="#888"/><circle cx="66" cy="60" r="2" fill="#1a1a18"/>
+  <rect x="10" y="56" width="76" height="6" rx="2" fill="#d96a00"/>
+  <rect x="14" y="17" width="58" height="9" rx="2" fill="#0f2156"/>
+  <text x="43" y="24" font-family="Arial Black" font-size="6.5" font-weight="900" fill="#f47c20" text-anchor="middle" letter-spacing="1">SCHOOL BUS</text>
+  <rect x="5" y="52" width="4" height="8" rx="1" fill="#555"/>
+</svg></div><div class=\"icon-badge-label\">Bus available (+$20/mo)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="34" y="8" width="12" height="22" rx="3" fill="#f47c20"/>
+  <polygon points="40,10 44,22 52,22 46,28 48,36 40,31 32,36 34,28 28,22 36,22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="18" fill="#ffd700"/>
+  <circle cx="40" cy="52" r="14" fill="#f47c20"/>
+  <text x="40" y="57" font-family="Arial Black" font-size="13" font-weight="900" fill="white" text-anchor="middle">1ST</text>
+</svg></div><div class=\"icon-badge-label\">Weekly medals (Pre-1A-3rd)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="28" y="60" width="24" height="6" rx="3" fill="#f47c20"/>
+  <rect x="24" y="66" width="32" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="50" width="8" height="12" fill="#f47c20"/>
+  <path d="M20,14 L60,14 L60,44 C60,52 50,58 40,58 C30,58 20,52 20,44 Z" fill="#f47c20"/>
+  <path d="M20,18 L14,18 C14,18 12,34 22,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <path d="M60,18 L66,18 C66,18 68,34 58,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="40" cy="36" r="10" fill="#0f2156" opacity="0.2"/>
+  <text x="40" y="40" font-family="Arial Black" font-size="11" font-weight="900" fill="white" text-anchor="middle">CHS</text>
+</svg></div><div class=\"icon-badge-label\">Trophies (4th-8th)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="20" cy="24" r="9" fill="#f47c20"/>
+  <path d="M6,52 C6,42 14,36 20,36 C26,36 34,42 34,52 L34,58 L6,58 Z" fill="#f47c20"/>
+  <circle cx="60" cy="24" r="9" fill="#0f2156"/>
+  <path d="M46,52 C46,42 54,36 60,36 C66,36 74,42 74,52 L74,58 L46,58 Z" fill="#0f2156"/>
+  <circle cx="40" cy="22" r="8" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <path d="M28,50 C28,41 34,36 40,36 C46,36 52,41 52,50 L52,58 L28,58 Z" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <line x1="40" y1="14" x2="40" y2="58" stroke="#f47c20" stroke-width="2" stroke-dasharray="3,3"/>
+</svg></div><div class=\"icon-badge-label\">Divided into teams</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,8 L44,20 L58,20 L47,28 L51,42 L40,34 L29,42 L33,28 L22,20 L36,20 Z" fill="#f47c20"/>
+  <rect x="28" y="58" width="24" height="5" rx="2" fill="#f47c20"/>
+  <rect x="23" y="63" width="34" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="48" width="8" height="12" fill="#0f2156"/>
+  <path d="M18,16 L62,16 L62,46 C62,54 52,60 40,60 C28,60 18,54 18,46 Z" fill="#0f2156" opacity="0.15"/>
+</svg></div><div class=\"icon-badge-label\">Championship competition</div></div>`,
+  'girls-soccer': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Mondays 6-7pm</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">Socceroof Crown Heights</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
+  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
+  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
+  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Pre-1A to 8th grade</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="8" y="16" width="64" height="56" rx="6" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <rect x="8" y="16" width="64" height="18" rx="6" fill="#0f2156"/>
+  <rect x="8" y="28" width="64" height="6" fill="#0f2156"/>
+  <line x1="8" y1="46" x2="72" y2="46" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <line x1="8" y1="60" x2="72" y2="60" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <line x1="28" y1="34" x2="28" y2="72" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <line x1="48" y1="34" x2="48" y2="72" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <rect x="20" y="8" width="8" height="16" rx="4" fill="#f47c20"/>
+  <rect x="52" y="8" width="8" height="16" rx="4" fill="#f47c20"/>
+  <circle cx="20" cy="52" r="5" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="5" fill="#0f2156"/>
+  <text x="40" y="27" font-family="Arial Black" font-size="9" font-weight="900" fill="white" text-anchor="middle">2 SEASONS</text>
+</svg></div><div class=\"icon-badge-label\">2 seasons per year</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" width="52" height="52">
+  <rect x="6" y="24" width="80" height="34" rx="4" fill="#f47c20"/>
+  <rect x="10" y="16" width="72" height="12" rx="4" fill="#f47c20"/>
+  <rect x="6" y="36" width="80" height="6" fill="#1a1a18"/>
+  <rect x="14" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="32" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="50" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="82" y="24" width="12" height="34" rx="0" fill="#e8a000"/>
+  <rect x="83" y="27" width="9" height="12" rx="2" fill="#e8edf8"/>
+  <rect x="84" y="50" width="8" height="5" rx="2" fill="#fff9c4"/>
+  <rect x="82" y="56" width="14" height="4" rx="2" fill="#0f2156"/>
+  <rect x="4" y="34" width="3" height="10" rx="1" fill="#0f2156"/>
+  <rect x="66" y="29" width="10" height="18" rx="1" fill="#d96a00"/>
+  <line x1="71" y1="29" x2="71" y2="47" stroke="#f47c20" stroke-width="1"/>
+  <circle cx="24" cy="60" r="9" fill="#1a1a18"/><circle cx="24" cy="60" r="5" fill="#888"/><circle cx="24" cy="60" r="2" fill="#1a1a18"/>
+  <circle cx="66" cy="60" r="9" fill="#1a1a18"/><circle cx="66" cy="60" r="5" fill="#888"/><circle cx="66" cy="60" r="2" fill="#1a1a18"/>
+  <rect x="10" y="56" width="76" height="6" rx="2" fill="#d96a00"/>
+  <rect x="14" y="17" width="58" height="9" rx="2" fill="#0f2156"/>
+  <text x="43" y="24" font-family="Arial Black" font-size="6.5" font-weight="900" fill="#f47c20" text-anchor="middle" letter-spacing="1">SCHOOL BUS</text>
+  <rect x="5" y="52" width="4" height="8" rx="1" fill="#555"/>
+</svg></div><div class=\"icon-badge-label\">Bus available (+$20/mo)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="34" y="8" width="12" height="22" rx="3" fill="#f47c20"/>
+  <polygon points="40,10 44,22 52,22 46,28 48,36 40,31 32,36 34,28 28,22 36,22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="18" fill="#ffd700"/>
+  <circle cx="40" cy="52" r="14" fill="#f47c20"/>
+  <text x="40" y="57" font-family="Arial Black" font-size="13" font-weight="900" fill="white" text-anchor="middle">1ST</text>
+</svg></div><div class=\"icon-badge-label\">Weekly medals (younger)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="28" y="60" width="24" height="6" rx="3" fill="#f47c20"/>
+  <rect x="24" y="66" width="32" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="50" width="8" height="12" fill="#f47c20"/>
+  <path d="M20,14 L60,14 L60,44 C60,52 50,58 40,58 C30,58 20,52 20,44 Z" fill="#f47c20"/>
+  <path d="M20,18 L14,18 C14,18 12,34 22,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <path d="M60,18 L66,18 C66,18 68,34 58,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="40" cy="36" r="10" fill="#0f2156" opacity="0.2"/>
+  <text x="40" y="40" font-family="Arial Black" font-size="11" font-weight="900" fill="white" text-anchor="middle">CHS</text>
+</svg></div><div class=\"icon-badge-label\">Trophies (older groups)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="20" cy="24" r="9" fill="#f47c20"/>
+  <path d="M6,52 C6,42 14,36 20,36 C26,36 34,42 34,52 L34,58 L6,58 Z" fill="#f47c20"/>
+  <circle cx="60" cy="24" r="9" fill="#0f2156"/>
+  <path d="M46,52 C46,42 54,36 60,36 C66,36 74,42 74,52 L74,58 L46,58 Z" fill="#0f2156"/>
+  <circle cx="40" cy="22" r="8" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <path d="M28,50 C28,41 34,36 40,36 C46,36 52,41 52,50 L52,58 L28,58 Z" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <line x1="40" y1="14" x2="40" y2="58" stroke="#f47c20" stroke-width="2" stroke-dasharray="3,3"/>
+</svg></div><div class=\"icon-badge-label\">Divided into teams</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,8 L44,20 L58,20 L47,28 L51,42 L40,34 L29,42 L33,28 L22,20 L36,20 Z" fill="#f47c20"/>
+  <rect x="28" y="58" width="24" height="5" rx="2" fill="#f47c20"/>
+  <rect x="23" y="63" width="34" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="48" width="8" height="12" fill="#0f2156"/>
+  <path d="M18,16 L62,16 L62,46 C62,54 52,60 40,60 C28,60 18,54 18,46 Z" fill="#0f2156" opacity="0.15"/>
+</svg></div><div class=\"icon-badge-label\">Championship competition</div></div>`,
+  'boys-bball': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Mon & Thu evenings</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">German School · 760 Sterling Place</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
+  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
+  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
+  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">1st to 8th grade</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="18" r="11" fill="#0f2156"/>
+  <rect x="22" y="34" width="36" height="28" rx="4" fill="#0f2156"/>
+  <rect x="22" y="34" width="9" height="28" rx="0" fill="#f47c20"/>
+  <rect x="40" y="34" width="9" height="28" fill="#f47c20"/>
+  <rect x="58" y="34" width="4" height="28" rx="4" fill="#0f2156" opacity="0.01"/>
+  <rect x="22" y="43" width="36" height="3" fill="#f47c20"/>
+  <rect x="22" y="52" width="36" height="3" fill="#f47c20"/>
+  <path d="M34,62 L30,76 M46,62 L50,76" stroke="#0f2156" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="52" r="6" fill="#f47c20"/>
+  <text x="24" y="55" font-family="Arial" font-size="7" font-weight="bold" fill="white" text-anchor="middle">!</text>
+</svg></div><div class=\"icon-badge-label\">Professional refs</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="34" y="8" width="12" height="22" rx="3" fill="#f47c20"/>
+  <polygon points="40,10 44,22 52,22 46,28 48,36 40,31 32,36 34,28 28,22 36,22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="18" fill="#ffd700"/>
+  <circle cx="40" cy="52" r="14" fill="#f47c20"/>
+  <text x="40" y="57" font-family="Arial Black" font-size="13" font-weight="900" fill="white" text-anchor="middle">1ST</text>
+</svg></div><div class=\"icon-badge-label\">Weekly medals (1st-3rd)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="28" y="60" width="24" height="6" rx="3" fill="#f47c20"/>
+  <rect x="24" y="66" width="32" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="50" width="8" height="12" fill="#f47c20"/>
+  <path d="M20,14 L60,14 L60,44 C60,52 50,58 40,58 C30,58 20,52 20,44 Z" fill="#f47c20"/>
+  <path d="M20,18 L14,18 C14,18 12,34 22,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <path d="M60,18 L66,18 C66,18 68,34 58,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="40" cy="36" r="10" fill="#0f2156" opacity="0.2"/>
+  <text x="40" y="40" font-family="Arial Black" font-size="11" font-weight="900" fill="white" text-anchor="middle">CHS</text>
+</svg></div><div class=\"icon-badge-label\">Trophies (4th-8th)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="20" cy="24" r="9" fill="#f47c20"/>
+  <path d="M6,52 C6,42 14,36 20,36 C26,36 34,42 34,52 L34,58 L6,58 Z" fill="#f47c20"/>
+  <circle cx="60" cy="24" r="9" fill="#0f2156"/>
+  <path d="M46,52 C46,42 54,36 60,36 C66,36 74,42 74,52 L74,58 L46,58 Z" fill="#0f2156"/>
+  <circle cx="40" cy="22" r="8" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <path d="M28,50 C28,41 34,36 40,36 C46,36 52,41 52,50 L52,58 L28,58 Z" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <line x1="40" y1="14" x2="40" y2="58" stroke="#f47c20" stroke-width="2" stroke-dasharray="3,3"/>
+</svg></div><div class=\"icon-badge-label\">Divided into teams</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,8 L44,20 L58,20 L47,28 L51,42 L40,34 L29,42 L33,28 L22,20 L36,20 Z" fill="#f47c20"/>
+  <rect x="28" y="58" width="24" height="5" rx="2" fill="#f47c20"/>
+  <rect x="23" y="63" width="34" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="48" width="8" height="12" fill="#0f2156"/>
+  <path d="M18,16 L62,16 L62,46 C62,54 52,60 40,60 C28,60 18,54 18,46 Z" fill="#0f2156" opacity="0.15"/>
+</svg></div><div class=\"icon-badge-label\">Championship competition</div></div>`,
+  'girls-bball': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Wed evenings</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">German School · 760 Sterling Place</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
+  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
+  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
+  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">1st to 8th grade</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="8" y="16" width="64" height="56" rx="6" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <rect x="8" y="16" width="64" height="18" rx="6" fill="#0f2156"/>
+  <rect x="8" y="28" width="64" height="6" fill="#0f2156"/>
+  <line x1="8" y1="46" x2="72" y2="46" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <line x1="8" y1="60" x2="72" y2="60" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <line x1="28" y1="34" x2="28" y2="72" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <line x1="48" y1="34" x2="48" y2="72" stroke="#0f2156" stroke-width="1" opacity="0.2"/>
+  <rect x="20" y="8" width="8" height="16" rx="4" fill="#f47c20"/>
+  <rect x="52" y="8" width="8" height="16" rx="4" fill="#f47c20"/>
+  <circle cx="20" cy="52" r="5" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="5" fill="#0f2156"/>
+  <text x="40" y="27" font-family="Arial Black" font-size="9" font-weight="900" fill="white" text-anchor="middle">2 SEASONS</text>
+</svg></div><div class=\"icon-badge-label\">2 seasons per year</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" width="52" height="52">
+  <rect x="6" y="24" width="80" height="34" rx="4" fill="#f47c20"/>
+  <rect x="10" y="16" width="72" height="12" rx="4" fill="#f47c20"/>
+  <rect x="6" y="36" width="80" height="6" fill="#1a1a18"/>
+  <rect x="14" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="32" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="50" y="27" width="14" height="10" rx="2" fill="#e8edf8"/>
+  <rect x="82" y="24" width="12" height="34" rx="0" fill="#e8a000"/>
+  <rect x="83" y="27" width="9" height="12" rx="2" fill="#e8edf8"/>
+  <rect x="84" y="50" width="8" height="5" rx="2" fill="#fff9c4"/>
+  <rect x="82" y="56" width="14" height="4" rx="2" fill="#0f2156"/>
+  <rect x="4" y="34" width="3" height="10" rx="1" fill="#0f2156"/>
+  <rect x="66" y="29" width="10" height="18" rx="1" fill="#d96a00"/>
+  <line x1="71" y1="29" x2="71" y2="47" stroke="#f47c20" stroke-width="1"/>
+  <circle cx="24" cy="60" r="9" fill="#1a1a18"/><circle cx="24" cy="60" r="5" fill="#888"/><circle cx="24" cy="60" r="2" fill="#1a1a18"/>
+  <circle cx="66" cy="60" r="9" fill="#1a1a18"/><circle cx="66" cy="60" r="5" fill="#888"/><circle cx="66" cy="60" r="2" fill="#1a1a18"/>
+  <rect x="10" y="56" width="76" height="6" rx="2" fill="#d96a00"/>
+  <rect x="14" y="17" width="58" height="9" rx="2" fill="#0f2156"/>
+  <text x="43" y="24" font-family="Arial Black" font-size="6.5" font-weight="900" fill="#f47c20" text-anchor="middle" letter-spacing="1">SCHOOL BUS</text>
+  <rect x="5" y="52" width="4" height="8" rx="1" fill="#555"/>
+</svg></div><div class=\"icon-badge-label\">Bus available (+$20/mo)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="34" y="8" width="12" height="22" rx="3" fill="#f47c20"/>
+  <polygon points="40,10 44,22 52,22 46,28 48,36 40,31 32,36 34,28 28,22 36,22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="22" fill="#f47c20"/>
+  <circle cx="40" cy="52" r="18" fill="#ffd700"/>
+  <circle cx="40" cy="52" r="14" fill="#f47c20"/>
+  <text x="40" y="57" font-family="Arial Black" font-size="13" font-weight="900" fill="white" text-anchor="middle">1ST</text>
+</svg></div><div class=\"icon-badge-label\">Weekly medals (younger)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <rect x="28" y="60" width="24" height="6" rx="3" fill="#f47c20"/>
+  <rect x="24" y="66" width="32" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="50" width="8" height="12" fill="#f47c20"/>
+  <path d="M20,14 L60,14 L60,44 C60,52 50,58 40,58 C30,58 20,52 20,44 Z" fill="#f47c20"/>
+  <path d="M20,18 L14,18 C14,18 12,34 22,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <path d="M60,18 L66,18 C66,18 68,34 58,38" fill="none" stroke="#0f2156" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="40" cy="36" r="10" fill="#0f2156" opacity="0.2"/>
+  <text x="40" y="40" font-family="Arial Black" font-size="11" font-weight="900" fill="white" text-anchor="middle">CHS</text>
+</svg></div><div class=\"icon-badge-label\">Trophies (older groups)</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="20" cy="24" r="9" fill="#f47c20"/>
+  <path d="M6,52 C6,42 14,36 20,36 C26,36 34,42 34,52 L34,58 L6,58 Z" fill="#f47c20"/>
+  <circle cx="60" cy="24" r="9" fill="#0f2156"/>
+  <path d="M46,52 C46,42 54,36 60,36 C66,36 74,42 74,52 L74,58 L46,58 Z" fill="#0f2156"/>
+  <circle cx="40" cy="22" r="8" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <path d="M28,50 C28,41 34,36 40,36 C46,36 52,41 52,50 L52,58 L28,58 Z" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <line x1="40" y1="14" x2="40" y2="58" stroke="#f47c20" stroke-width="2" stroke-dasharray="3,3"/>
+</svg></div><div class=\"icon-badge-label\">Divided into teams</div></div>`,
+  'mens-bball': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Mon & Thu evenings</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">German School · 760 Sterling Place</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="18" r="11" fill="#0f2156"/>
+  <rect x="22" y="34" width="36" height="28" rx="4" fill="#0f2156"/>
+  <rect x="22" y="34" width="9" height="28" rx="0" fill="#f47c20"/>
+  <rect x="40" y="34" width="9" height="28" fill="#f47c20"/>
+  <rect x="58" y="34" width="4" height="28" rx="4" fill="#0f2156" opacity="0.01"/>
+  <rect x="22" y="43" width="36" height="3" fill="#f47c20"/>
+  <rect x="22" y="52" width="36" height="3" fill="#f47c20"/>
+  <path d="M34,62 L30,76 M46,62 L50,76" stroke="#0f2156" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="52" r="6" fill="#f47c20"/>
+  <text x="24" y="55" font-family="Arial" font-size="7" font-weight="bold" fill="white" text-anchor="middle">!</text>
+</svg></div><div class=\"icon-badge-label\">Professional refs</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="20" cy="24" r="9" fill="#f47c20"/>
+  <path d="M6,52 C6,42 14,36 20,36 C26,36 34,42 34,52 L34,58 L6,58 Z" fill="#f47c20"/>
+  <circle cx="60" cy="24" r="9" fill="#0f2156"/>
+  <path d="M46,52 C46,42 54,36 60,36 C66,36 74,42 74,52 L74,58 L46,58 Z" fill="#0f2156"/>
+  <circle cx="40" cy="22" r="8" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <path d="M28,50 C28,41 34,36 40,36 C46,36 52,41 52,50 L52,58 L28,58 Z" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <line x1="40" y1="14" x2="40" y2="58" stroke="#f47c20" stroke-width="2" stroke-dasharray="3,3"/>
+</svg></div><div class=\"icon-badge-label\">League - teams drafted</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,8 L44,20 L58,20 L47,28 L51,42 L40,34 L29,42 L33,28 L22,20 L36,20 Z" fill="#f47c20"/>
+  <rect x="28" y="58" width="24" height="5" rx="2" fill="#f47c20"/>
+  <rect x="23" y="63" width="34" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="48" width="8" height="12" fill="#0f2156"/>
+  <path d="M18,16 L62,16 L62,46 C62,54 52,60 40,60 C28,60 18,54 18,46 Z" fill="#0f2156" opacity="0.15"/>
+</svg></div><div class=\"icon-badge-label\">Championship + playoffs</div></div>`,
+};
+
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const STRIPE_PK = 'pk_live_51Jz0VxBXnWIUn5T1JtARNKfgnFVcQrXAF0i2p5gt2jVHXGEoLSRLseGhFUwyJSKfTPrYsNOf5gjkJkY3ogs7wkGr00tsHUtr49';
+const INC = 0.50;
+const OPT_DATES = [new Date('2026-11-30'), new Date('2027-02-28')];
+const BASE = 'http://static1.squarespace.com/static/646ad25d86d7905786f9751a/646ad523a8ae3b37822a0191/';
+
+// ── PROGRAM DATA ──────────────────────────────────────────────────────────────
+const PROGRAMS = [
+  {
+    id:'toddler-soccer', sport:'soccer',
+    name:'Toddler Soccer', tuition:1350, games:36, type:'year',
+    day:'Sundays', time:'10–11am', grades:'Ages 3–5 · Boys & Girls',
+    photo: BASE+'64888bdc388c793aabc53f48/1762108667167/WhatsApp+Image+2024-01-07+at+6.13.02+PM.jpeg?format=600w',
+    photos:[
+      BASE+'64888bdc388c793aabc53f48/1762108667167/WhatsApp+Image+2024-01-07+at+6.13.02+PM.jpeg?format=600w',
+      BASE+'64dbbb06b036517905a80043/1765143062826/PXL_20230507_215054008.PORTRAIT.jpg?format=600w',
+    ],
+    highlights:[{i:'⚽',t:'Sundays 10–11am'},{i:'📍',t:'Socceroof Crown Heights'},{i:'👶',t:'Ages 3–5, boys & girls'},{i:'🗓️',t:'Aug 30 – June 13'}],
+    desc:'Welcome to our super fun and active toddler soccer program! Coaches lead imaginative drills and activities that develop coordination and a love for soccer in a safe, positive environment.',
+    desc2:'Parental attendance is required — toddlers need support during sessions. Siblings 12+ may supervise after week 1.',
+    commit:'Year-long program · 36 games · Monthly payment plan available',
+    awards:['🌟 Weekly sticker — every single player, every week!','🏅 Medal at end of year ceremony'],
+    season:[
+      {month:'August',    games:[{d:'30',c:false}]},
+      {month:'September', games:[{d:'6',c:false},{d:'13',c:true,r:'Rosh Hashana'},{d:'20',c:true,r:'Erev YK'},{d:'27',c:false}]},
+      {month:'October',   games:[{d:'4',c:true,r:'Simchat Torah'},{d:'11',c:false},{d:'18',c:false},{d:'25',c:false}]},
+      {month:'November',  games:[{d:'1',c:false},{d:'8',c:false},{d:'15',c:false},{d:'22',c:false},{d:'29',c:false}], opt:true},
+      {month:'December',  games:[{d:'6',c:false},{d:'13',c:false},{d:'20',c:true,r:'Tzom'},{d:'27',c:false}]},
+      {month:'January',   games:[{d:'3',c:false},{d:'10',c:false},{d:'17',c:false},{d:'24',c:false},{d:'31',c:false}]},
+      {month:'February',  games:[{d:'7',c:false},{d:'14',c:false},{d:'21',c:false},{d:'28',c:false}], opt:true},
+      {month:'March',     games:[{d:'7',c:false},{d:'14',c:false},{d:'21',c:false},{d:'28',c:false}]},
+      {month:'April',     games:[{d:'4',c:false},{d:'11',c:false},{d:'18',c:false},{d:'25',c:true,r:'Pesach'}]},
+      {month:'May',       games:[{d:'2',c:true,r:'Isru Chag'},{d:'9',c:false},{d:'16',c:false},{d:'23',c:false},{d:'30',c:false}]},
+      {month:'June',      games:[{d:'6',c:false},{d:'13',c:false}]},
+    ],
+  },
+  {
+    id:'boys-soccer', sport:'soccer',
+    name:'Boys Soccer', tuition:1264, games:37, type:'year',
+    day:'Sun &amp; Wed (choose one or both)', time:'', grades:'Pre-1A – 8th grade',
+    photo: BASE+'64dbbb06b036517905a80043/1765143062826/PXL_20230507_215054008.PORTRAIT.jpg?format=600w',
+    photos:[
+      BASE+'64dbbb06b036517905a80043/1765143062826/PXL_20230507_215054008.PORTRAIT.jpg?format=600w',
+      BASE+'64888bdc388c793aabc53f48/1762108667167/WhatsApp+Image+2024-01-07+at+6.13.02+PM.jpeg?format=600w',
+    ],
+    highlights:[{i:'⚽',t:'Sun & Wed sessions'},{i:'📍',t:'Socceroof Crown Heights'},{i:'👦',t:'Pre-1A – 8th grade'},{i:'👨‍🏫',t:'Dedicated coach per age'}],
+    desc:'Boys soccer runs on <strong>Sundays</strong> and <strong>Wednesdays</strong> as two separate programs. You can register for Sunday, Wednesday, or both — each is priced and registered independently. Players are grouped by age with a dedicated coach and field.',
+    commit:'Year-long program · 36 Sundays or 37 Wednesdays · Monthly payment plan available',
+    awards:['Weekly medal — Pre-1A to 3rd grade','Personalized trophy — 4th to 8th grade','Championship trophy — 4th to 8th grade (pending group size)'],
+    season:[
+      {month:'August',    games:[{d:'30',c:false}]},
+      {month:'September', games:[{d:'6',c:false},{d:'13',c:true,r:'Rosh Hashana'},{d:'20',c:true,r:'Erev YK'},{d:'27',c:false}]},
+      {month:'October',   games:[{d:'4',c:true,r:'Simchat Torah'},{d:'11',c:false},{d:'18',c:false},{d:'25',c:false}]},
+      {month:'November',  games:[{d:'1',c:false},{d:'8',c:false},{d:'15',c:false},{d:'22',c:false},{d:'29',c:false}], opt:true},
+      {month:'December',  games:[{d:'6',c:false},{d:'13',c:false},{d:'20',c:true,r:'Tzom'},{d:'27',c:false}]},
+      {month:'January',   games:[{d:'3',c:false},{d:'10',c:false},{d:'17',c:false},{d:'24',c:false},{d:'31',c:false}]},
+      {month:'February',  games:[{d:'7',c:false},{d:'14',c:false},{d:'21',c:false},{d:'28',c:false}], opt:true},
+      {month:'March',     games:[{d:'7',c:false},{d:'14',c:false},{d:'21',c:false},{d:'28',c:false}]},
+      {month:'April',     games:[{d:'4',c:false},{d:'11',c:false},{d:'18',c:false},{d:'25',c:true,r:'Pesach'}]},
+      {month:'May',       games:[{d:'2',c:true,r:'Isru Chag'},{d:'9',c:false},{d:'16',c:false},{d:'23',c:false},{d:'30',c:false}]},
+      {month:'June',      games:[{d:'6',c:false},{d:'9',c:false}]},
+    ],
+  },
+  {
+    id:'girls-soccer', sport:'soccer',
+    name:'Girls Soccer', tuition:500, games:12, type:'season',
+    day:'Mondays', time:'6–7pm', grades:'Pre-1A – 8th grade',
+    photo: './chs-girls-soccer-photo.jpg',
+    photos:[
+      BASE+'646ad523a8ae3b37822a0197/1771115033700/IMG_8492+Small.jpeg?format=600w',
+      BASE+'64888bdc388c793aabc53f48/1762108667167/WhatsApp+Image+2024-01-07+at+6.13.02+PM.jpeg?format=600w',
+    ],
+    highlights:[{i:'⚽',t:'Mondays 6–7pm'},{i:'👧',t:'Pre-1A – 8th grade'},{i:'🗓️',t:'2 seasons × 12 weeks'},{i:'🚌',t:'Bus available'}],
+    desc:'For beginners and advanced players alike. A supportive, fun environment in a Chassidish, Tznius setting. Player of the Week medal awarded every session.',
+    commit:'Seasonal program · 2 seasons of 12 weeks each · Per-season pricing',
+    awards:['Player of the Week medal — younger groups','Personalized trophy — older groups','Championship trophy — top team'],
+    season:[
+      {month:'Season 1', games:[{d:'Sep 2',c:false},{d:'Sep 9',c:false},{d:'Sep 16',c:false},{d:'Sep 23',c:false},{d:'Sep 30',c:false},{d:'Oct 7',c:false},{d:'Oct 14',c:false},{d:'Oct 21',c:false},{d:'Oct 28',c:false},{d:'Nov 4',c:false},{d:'Nov 11',c:false},{d:'Nov 18',c:false}]},
+      {month:'Season 2', games:[{d:'Jan 6',c:false},{d:'Jan 13',c:false},{d:'Jan 20',c:false},{d:'Jan 27',c:false},{d:'Feb 3',c:false},{d:'Feb 10',c:false},{d:'Feb 17',c:false},{d:'Feb 24',c:false},{d:'Mar 3',c:false},{d:'Mar 10',c:false},{d:'Mar 17',c:false},{d:'Mar 31',c:false}]},
+    ],
+  },
+  {
+    id:'boys-bball', sport:'bball',
+    name:'Boys Basketball', tuition:1200, games:33, type:'year',
+    day:'Mon & Thu', time:'evenings', grades:'1st – 8th grade',
+    photo: BASE+'64f7e3aa651cc5686aa5c799/1693967274152/PXL_20230522_213143921.PORTRAIT.jpg?format=600w',
+    photos:[
+      BASE+'64f7e3aa651cc5686aa5c799/1693967274152/PXL_20230522_213143921.PORTRAIT.jpg?format=600w',
+      BASE+'64dbbb06b036517905a80043/1765143062826/PXL_20230507_215054008.PORTRAIT.jpg?format=600w',
+    ],
+    highlights:[{i:'🏀',t:'Mon & Thu evenings'},{i:'📍',t:'German School Brooklyn'},{i:'👦',t:'1st – 8th grade'},{i:'🦺',t:'Professional refs every game'}],
+    desc:'Monday and Thursday evenings at the German School gym in Crown Heights. Players grouped by age with dedicated coaches. Professional referees each session.',
+    commit:'Year-long program · 33 Monday or 35 Thursday games · Monthly payment plan available',
+    awards:['Weekly medal — 1st to 3rd grade','Personalized trophy — 4th to 8th grade','Championship trophy — top team'],
+    season:[
+      {month:'August',    games:[{d:'31',c:false}]},
+      {month:'September', games:[{d:'7',c:false},{d:'14',c:true,r:'Tzom'},{d:'21',c:true,r:'Yom Kippur'},{d:'28',c:false}]},
+      {month:'October',   games:[{d:'5',c:true,r:'Isru Chag'},{d:'12',c:false},{d:'19',c:false},{d:'26',c:false}]},
+      {month:'November',  games:[{d:'2',c:false},{d:'9',c:false},{d:'16',c:false},{d:'23',c:false},{d:'30',c:false}], opt:true},
+      {month:'December',  games:[{d:'7',c:true,r:''},{d:'14',c:false},{d:'21',c:true,r:'Tzom'},{d:'28',c:false}]},
+      {month:'January',   games:[{d:'4',c:false},{d:'11',c:false},{d:'18',c:false},{d:'25',c:false}]},
+      {month:'February',  games:[{d:'1',c:false},{d:'8',c:true,r:'Midwinter'},{d:'15',c:false},{d:'22',c:false}], opt:true},
+      {month:'March',     games:[{d:'1',c:false},{d:'8',c:false},{d:'15',c:false},{d:'22',c:true,r:'Tzom Esther'},{d:'29',c:false}]},
+      {month:'April',     games:[{d:'5',c:false},{d:'12',c:false},{d:'19',c:false},{d:'26',c:true,r:'Pesach'}]},
+      {month:'May',       games:[{d:'3',c:false},{d:'10',c:false},{d:'17',c:false},{d:'24',c:true,r:"Lag B'Omer"},{d:'31',c:false}]},
+      {month:'June',      games:[{d:'7',c:false},{d:'14',c:false}]},
+    ],
+  },
+  {
+    id:'girls-bball', sport:'bball',
+    name:'Girls Basketball', tuition:500, games:12, type:'season',
+    day:'Wednesdays', time:'evenings', grades:'1st – 8th grade',
+    photo: './chs-girls-bball-photo.jpg',
+    photos:[
+      BASE+'646ad523a8ae3b37822a0197/1771115033700/IMG_8492+Small.jpeg?format=600w',
+    ],
+    highlights:[{i:'🏀',t:'Wednesdays evenings'},{i:'👧',t:'1st – 8th grade'},{i:'🗓️',t:'2 seasons × 12 weeks'},{i:'🚌',t:'Bus available'}],
+    desc:'Two 12-week seasons on Wednesday evenings. Supportive, fun, and competitive in a Chassidish, Tznius setting. All skill levels welcome.',
+    commit:'Seasonal program · 2 seasons of 12 weeks each · Per-season pricing',
+    awards:['Player of the Week medal — younger groups','Personalized trophy — older groups'],
+    season:[
+      {month:'Season 1', games:[{d:'Sep 2',c:false},{d:'Sep 9',c:false},{d:'Sep 16',c:false},{d:'Sep 23',c:false},{d:'Sep 30',c:false},{d:'Oct 7',c:false},{d:'Oct 14',c:false},{d:'Oct 21',c:false},{d:'Oct 28',c:false},{d:'Nov 4',c:false},{d:'Nov 11',c:false},{d:'Nov 18',c:false}]},
+      {month:'Season 2', games:[{d:'Jan 6',c:false},{d:'Jan 13',c:false},{d:'Jan 20',c:false},{d:'Jan 27',c:false},{d:'Feb 3',c:false},{d:'Feb 10',c:false},{d:'Feb 17',c:false},{d:'Feb 24',c:false},{d:'Mar 3',c:false},{d:'Mar 10',c:false},{d:'Mar 17',c:false},{d:'Mar 31',c:false}]},
+    ],
+  },
+  {
+    id:'mens-bball', sport:'bball',
+    name:"Men's Basketball", tuition:400, games:12, type:'season',
+    day:'Mon & Thu', time:'evenings', grades:'Adults · League format',
+    photo: './chs-mens-bball-photo.jpg',
+    photos:['./chs-mens-bball-photo.jpg'],
+    highlights:[{i:'🏀',t:'Mon & Thu evenings'},{i:'🧑',t:'Adults, all levels'},{i:'👕',t:'Jersey included'},{i:'🏆',t:'Full league + playoffs'}],
+    desc:"Competitive adult league with professional referees. Teams formed through a draft. Full league schedule with standings and playoffs.",
+    commit:'12-session season · One flat fee · Jersey included',
+    awards:['Championship trophy','League MVP award','Full standings all season'],
+    season:[
+      {month:'Season', games:[{d:'Session 1',c:false},{d:'Session 2',c:false},{d:'Session 3',c:false},{d:'Session 4',c:false},{d:'Session 5',c:false},{d:'Session 6',c:false},{d:'Session 7',c:false},{d:'Session 8',c:false},{d:'Session 9',c:false},{d:'Session 10',c:false},{d:'Session 11',c:false},{d:'Session 12',c:false}]},
+    ],
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let selProg = null, selMonth = null, selPayment = null, galIdx = {};
+let stripeEl = null, stripeCard = null;
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function fmt(n){ return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function getNextOptDate(){
+  const n = OPT_DATES.find(d=>d>new Date());
+  return n ? n.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+}
+
+// ── HERO CAROUSEL ─────────────────────────────────────────────────────────────
+let heroIdx = 0;
+function heroPan(i){
+  heroIdx=(i+4)%4;
+  document.getElementById('heroTrack').style.transform=`translateX(-${heroIdx*100}%)`;
+  document.querySelectorAll('#heroDots .hdot').forEach((d,j)=>d.classList.toggle('on',j===heroIdx));
+}
+document.querySelectorAll('#heroDots .hdot').forEach((d,i)=>d.onclick=()=>heroPan(i));
+setInterval(()=>heroPan(heroIdx+1),3500);
+
+// ── BUILD HOME GRIDS ──────────────────────────────────────────────────────────
+['soccer','bball'].forEach(sport=>{
+  const grid = document.getElementById(sport+'Grid');
+  PROGRAMS.filter(p=>p.sport===sport).forEach(p=>{
+    const priceStr = p.type==='year' ? 'From $'+Math.round(p.tuition/8)+'/mo' : '$'+p.tuition+'/season';
+    const d = document.createElement('div');
+    d.className = 'prog-card';
+    d.innerHTML = `<img src="${p.photo}" loading="lazy" onerror="this.style.background='var(--navy-light)'">`+
+      `<div class="prog-info"><div class="prog-name">${p.name}</div><div class="prog-day">${p.day}${p.time?' · '+p.time:''} · ${p.grades}</div><span class="prog-pill">${priceStr}</span></div>`;
+    d.onclick = ()=>openProduct(p);
+    grid.appendChild(d);
+  });
+});
+
+const PROG_SCHEDULES = {
+  'toddler-soccer': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🕙</span><div><strong>Sundays 10:00–11:00am</strong></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>Socceroof Crown Heights</strong><div class="sched-sub">1700 Atlantic Ave, Brooklyn</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Aug 30 – June 13</strong><div class="sched-sub">36 sessions · Year-long program</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🚌</span><div><strong>No bus service</strong><div class="sched-sub">Drop-off and pick-up by parent required</div></div></div>
+        <div class="schedule-note">Parental attendance required at all sessions. Siblings 12+ may supervise after week 1.</div>
+      </div>`,
+  'boys-soccer': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🕙</span><div><strong>Sundays — Pre-1A to 3rd grade</strong><div class="sched-sub">5:30–6:30pm · 36 sessions · Aug 30 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕙</span><div><strong>Sundays — 4th to 8th grade</strong><div class="sched-sub">6:30–7:30pm · 36 sessions · Aug 30 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕙</span><div><strong>Wednesdays — Pre-1A to 3rd grade</strong><div class="sched-sub">5:30–6:30pm · 37 sessions · Sep 2 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕙</span><div><strong>Wednesdays — 4th to 8th grade</strong><div class="sched-sub">6:30–7:30pm · 37 sessions · Sep 2 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">ℹ️</span><div><strong>Register for Sunday, Wednesday, or both</strong><div class="sched-sub">Sunday and Wednesday are separate registrations — choose one or both. Not a package deal.</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>Socceroof Crown Heights</strong><div class="sched-sub">1700 Atlantic Ave, Brooklyn</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🚌</span><div><strong>Bus transportation available</strong><div class="sched-sub">+$20/mo · Corner pickup & drop-off · Crown Heights, East Flatbush & Remsen Village</div></div></div>
+        <div class="schedule-note">Each age group has a dedicated coach and field. Sunday and Wednesday are separate programs — you can register for one or both. They are not bundled together.</div>
+      </div>`,
+  'girls-soccer': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🕕</span><div><strong>Mondays 6:00–7:00pm</strong></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>Socceroof Crown Heights</strong><div class="sched-sub">1700 Atlantic Ave, Brooklyn</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Season 1: September – November</strong><div class="sched-sub">12 sessions · Starts Sep 2, ends Nov 18</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Season 2: January – March</strong><div class="sched-sub">12 sessions · Starts Jan 6, ends Mar 31</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🚌</span><div><strong>Bus transportation available</strong><div class="sched-sub">+$20/mo · Corner pickup & drop-off · Crown Heights, East Flatbush & Remsen Village</div></div></div>
+      </div>`,
+  'boys-bball': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🕔</span><div><strong>1st – 3rd grade · Mondays</strong><div class="sched-sub">5:30–6:30pm · Aug 31 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕕</span><div><strong>3rd – 5th grade · Thursdays</strong><div class="sched-sub">6:30–7:30pm · Aug 31 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕕</span><div><strong>6th – 8th grade · Mondays</strong><div class="sched-sub">6:30–7:30pm · Aug 31 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕖</span><div><strong>6th – 8th grade · Tuesdays</strong><div class="sched-sub">7:30–8:45pm · Aug 31 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>German School Brooklyn</strong><div class="sched-sub">760 Sterling Pl, Brooklyn, NY 11216</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🦺</span><div><strong>Professional referees at every game</strong></div></div>
+        <div class="schedule-note">6th–8th grade players choose Monday or Tuesday. All other groups have a set day based on grade.</div>
+      </div>`,
+  'girls-bball': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Wednesdays — evenings</strong><div class="sched-sub">Time varies by age group</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>German School Brooklyn</strong><div class="sched-sub">760 Sterling Pl, Brooklyn, NY 11216</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Season 1: September – November</strong><div class="sched-sub">12 sessions · Starts Sep 2, ends Nov 18</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Season 2: January – March</strong><div class="sched-sub">12 sessions · Starts Jan 6, ends Mar 31</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🚌</span><div><strong>Bus transportation available</strong><div class="sched-sub">+$20/mo · Corner pickup & drop-off · Crown Heights, East Flatbush & Remsen Village</div></div></div>
+      </div>`,
+  'mens-bball': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Mondays & Thursdays — evenings</strong></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>German School Brooklyn</strong><div class="sched-sub">760 Sterling Pl, Brooklyn, NY 11216</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>12 sessions per season</strong><div class="sched-sub">Season dates announced before registration opens</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🦺</span><div><strong>Professional referees at every game</strong></div></div>
+        <div class="schedule-note">Teams are formed through a draft before the season begins. Full league standings updated throughout the season.</div>
+      </div>`,
+};
+
+// ── PRODUCT PAGE ──────────────────────────────────────────────────────────────
+function openProduct(p){
+  selProg=p; galIdx[p.id]=0;
+  document.getElementById('topbarTitle').textContent=p.name;
+  document.getElementById('ctaOptDate').textContent='Next opt-out: '+getNextOptDate();
+
+  const photos=p.photos||[p.photo];
+  const galleryHtml=`<div class="gallery-wrap"><div class="gtrack" id="gt-${p.id}">${photos.map(s=>`<img class="gslide" src="${s}" loading="lazy">`).join('')}</div>${photos.length>1?`<button class="garr prev" onclick="gNav('${p.id}',-1)">‹</button><button class="garr next" onclick="gNav('${p.id}',1)">›</button><div class="gdots" id="gd-${p.id}">${photos.map((_,i)=>`<button class="gdot ${i===0?'on':''}" onclick="gTo('${p.id}',${i})"></button>`).join('')}</div>`:''}</div>`;
+
+  document.getElementById('productContent').innerHTML=`
+    ${galleryHtml}
+    <div class="prod-title">${p.name}</div>
+
+    <div class="prod-tabs">
+      <button class="prod-tab on" onclick="swTab(0,this)">Overview</button>
+      <button class="prod-tab" onclick="swTab(1,this)">Schedule</button>
+      <button class="prod-tab" onclick="swTab(2,this)">Awards</button>
+    </div>
+    <div class="prod-panel on">
+      <div class="icon-badges">${PROG_FEATURES[p.id]||''}</div>
+      <p class="prod-desc">${p.desc||''}</p>
+      ${p.desc2?`<p class="prod-desc">${p.desc2}</p>`:''}
+    </div>
+    <div class="prod-panel">
+      ${PROG_SCHEDULES[p.id]||`<div class="commit-box">📋 ${p.commit||''}</div>`}
+    </div>
+    <div class="prod-panel">
+      ${(p.awards||[]).map(a=>a.includes('Weekly sticker')?`<div class="sticker-award-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="42" height="42" style="flex-shrink:0"><path d="M40,6 L45,22 L58,14 L52,28 L68,28 L56,38 L62,54 L48,46 L40,60 L32,46 L18,54 L24,38 L12,28 L28,28 L22,14 L35,22 Z" fill="#f47c20"/><path d="M40,14 L44,24 L54,19 L50,29 L62,29 L53,36 L58,48 L47,42 L40,52 L33,42 L22,48 L27,36 L18,29 L30,29 L26,19 L36,24 Z" fill="#ffd700"/><circle cx="40" cy="33" r="11" fill="#0f2156"/><text x="40" y="38" font-family="Arial Black" font-size="10" fill="#ffd700" text-anchor="middle">WOW!</text></svg><div><div class="sticker-award-text">${a}</div><div class="sticker-award-sub">Every child goes home with something to be proud of</div></div></div>`:`<div class="award-row">🏅 ${a}</div>`).join('')}
+    </div>
+  `;
+  showScreen('screenProduct');
+}
+function swTab(i,el){
+  document.querySelectorAll('.prod-tabs .prod-tab').forEach((t,j)=>t.classList.toggle('on',j===i));
+  document.querySelectorAll('.prod-panel').forEach((p,j)=>p.classList.toggle('on',j===i));
+}
+function gNav(id,dir){const n=selProg.photos.length;galIdx[id]=((galIdx[id]||0)+dir+n)%n;gTo(id,galIdx[id]);}
+function gTo(id,i){galIdx[id]=i;const t=document.getElementById('gt-'+id);if(t)t.style.transform=`translateX(-${i*100}%)`;document.querySelectorAll(`#gd-${id} .gdot`).forEach((d,j)=>d.classList.toggle('on',j===i));}
+function goHome(){showScreen('screenHome');}
+function goProduct(){showScreen('screenProduct');}
+
+// ── REGISTRATION FORM ─────────────────────────────────────────────────────────
+function goForm(){
+  if(!selProg){ alert('Please select a program first.'); return; }
+  try{
+    document.getElementById('formTopbarTitle').textContent=selProg.name;
+    selMonth=null; selPayment=null;
+    document.getElementById('formContent').style.display='block';
+    document.getElementById('successContent').style.display='none';
+    document.getElementById('paymentCard').style.display='none';
+    document.getElementById('payBtn').disabled=true;
+    const ps = document.getElementById('pricingSummary'); if(ps) ps.classList.remove('vis');
+    const om = document.getElementById('optMonthly'); if(om) om.classList.remove('selected');
+    const ol = document.getElementById('optLump'); if(ol) ol.classList.remove('selected');
+    buildCalendar();
+  } catch(e){ console.error('goForm error:', e); }
+  try{ initStripe(); } catch(e){ console.error('Stripe init error:', e); }
+  showScreen('screenForm');
+}
+
+function gamesPerMonth(mi){ return (selProg.season[mi].games||[]).filter(g=>!g.c).length; }
+function gamesMissed(mi){ let g=0; for(let i=0;i<mi;i++) g+=gamesPerMonth(i); return g; }
+function gamesRemaining(mi){ let g=0; for(let i=mi;i<selProg.season.length;i++) g+=gamesPerMonth(i); return g; }
+// Months remaining until end of June (inclusive) per signup month
+const MTJ = {
+  'August':11,'September':10,'October':9,'November':8,
+  'December':7,'January':6,'February':5,'March':4,
+  'April':3,'May':2,'June':1
+};
+
+function calcPricing(mi){
+  // Seasonal programs: 3 monthly payments
+  if(selProg.type==='season'){
+    const seasonGames = (selProg.season[mi]&&selProg.season[mi].games||[]).filter(g=>!g.c).length || selProg.games;
+    const total = selProg.tuition;
+    const inst = 3;
+    return {rate:total/seasonGames, rem:seasonGames, inst:inst, total:total, monthly:Math.round((total/inst)*100)/100};
+  }
+  const missed=gamesMissed(mi);
+  const rate=(selProg.tuition/selProg.games)+INC*missed;
+  const rem=gamesRemaining(mi);
+  const monthName=(selProg.season[mi]&&selProg.season[mi].month)||'September';
+  const inst=selProg.type==='year'?Math.min(8,MTJ[monthName]||1):1;
+  const total=rate*rem;
+  const monthly=total/inst;
+  return {rate,rem,inst,total,monthly};
+}
+
+// Month name to MTJ mapping
+const MTJ_BY_NAME = {
+  'August':11,'September':10,'October':9,'November':8,
+  'December':7,'January':6,'February':5,'March':4,
+  'April':3,'May':2,'June':1
+};
+const BUS_MONTHLY = 20;
+
+function getCurrentMonthIndex(){
+  // Current date: August 2026
+  const now = new Date();
+  const monthName = now.toLocaleString('en-US',{month:'long'});
+  if(!selProg) return 0;
+  const idx = selProg.season.findIndex(m => m.month === monthName);
+  return idx >= 0 ? idx : 0;
+}
+
+function buildCalendar(){
+  // Show session selector for Boys Soccer only
+  const selEl = document.getElementById('sessionSelector');
+  if(selEl){
+    selEl.style.display = selProg && selProg.id === 'boys-soccer' ? 'block' : 'none';
+    selectedSession = null;
+    document.querySelectorAll('.session-btn').forEach(b => b.classList.remove('on'));
+    document.getElementById('sessionNote').style.display = 'none';
+  }
+  // Auto-select current month
+  const mi = getCurrentMonthIndex();
+  selMonth = mi;
+  updatePricingDisplay();
+}
+
+function updatePricingDisplay(){
+  if(selMonth === null || !selProg) return;
+  const pr = calcPricing(selMonth);
+  const busOn = document.getElementById('busToggleInput') &&
+                document.getElementById('busToggleInput').checked;
+  const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer' || selProg.id === 'girls-bball')) ? BUS_MONTHLY : 0;
+  // If "Both" sessions selected for Boys Soccer, calculate Sun + Wed separately
+  let sessionMultiplier = 1;
+  let sessionLabel = '';
+  if(selProg.id === 'boys-soccer' && selectedSession === 'Both'){
+    // Sunday: 36 sessions, Wednesday: 37 sessions, both at same per-game rate
+    const sunGames = selProg.season ? selProg.season.filter((m,i) => gamesRemaining(i) > 0).length : 36;
+    const prSun = calcPricingForGames(selProg, selMonth, 36);
+    const prWed = calcPricingForGames(selProg, selMonth, 37);
+    const totalBoth = prSun.total + prWed.total;
+    const monthlyBoth = (prSun.monthly + prWed.monthly) + busMonthly;
+    const totalWithBus = totalBoth + (busOn ? BUS_MONTHLY * pr.inst : 0);
+    // Override display
+    const mainEl = document.getElementById('priceNowMain');
+    if(mainEl){ mainEl.textContent = fmt(monthlyBoth) + '/mo'; mainEl.classList.toggle('bus-added', busOn); }
+    const detEl = document.getElementById('priceNowDetail');
+    if(detEl) detEl.textContent = pr.inst + ' monthly payments · Sunday + Wednesday combined';
+    const totEl = document.getElementById('priceNowTotal');
+    if(totEl) totEl.textContent = 'Combined season total: ' + fmt(totalWithBus);
+    const breakdown = document.getElementById('breakdownBox');
+    if(breakdown){
+      let rows = '<div class="bkd-row"><span>Boys Soccer — Sundays (36 sessions)</span><span>' + fmt(prSun.total) + '</span></div>';
+      rows += '<div class="bkd-row"><span>Boys Soccer — Wednesdays (37 sessions)</span><span>' + fmt(prWed.total) + '</span></div>';
+      if(busOn) rows += '<div class="bkd-row bus"><span>Bus transportation (' + pr.inst + ' months)</span><span>' + fmt(BUS_MONTHLY * pr.inst) + '</span></div>';
+      rows += '<div class="bkd-row"><span>Combined season total</span><span>' + fmt(totalWithBus) + '</span></div>';
+      breakdown.innerHTML = rows;
+    }
+    document.getElementById('monthlyPrice').textContent = fmt(monthlyBoth);
+    document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments (combined)';
+    document.getElementById('lumpPrice').textContent = fmt(totalWithBus);
+    document.getElementById('lumpDetail').textContent = 'One payment · 73 sessions total';
+    if(document.getElementById('pricingSummary')) document.getElementById('pricingSummary').classList.add('vis');
+    return;
+  }
+  const totalMonthly = pr.monthly + busMonthly;
+  const totalLump = pr.total + (busMonthly * pr.inst);
+  const monthName = selProg.season[selMonth] ? selProg.season[selMonth].month : '';
+
+  // Show/hide bus toggle
+  const busCard = document.getElementById('busToggleCard');
+  if(busCard) busCard.style.display = (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer' || selProg.id === 'girls-bball') ? 'block' : 'none';
+
+  // Update price display
+  const mainEl = document.getElementById('priceNowMain');
+  if(mainEl){
+    mainEl.textContent = fmt(totalMonthly) + '/mo';
+    mainEl.classList.toggle('bus-added', busOn);
+  }
+  const detEl = document.getElementById('priceNowDetail');
+  if(detEl) detEl.textContent = pr.inst + ' monthly payments · joining ' + monthName;
+  const totEl = document.getElementById('priceNowTotal');
+  if(totEl) totEl.textContent = 'Season total: ' + fmt(pr.total + (busMonthly * pr.inst));
+
+  // Breakdown
+  const breakdown = document.getElementById('breakdownBox');
+  if(breakdown){
+    let rows = '<div class="bkd-row"><span>' + selProg.name + ' (' + pr.rem + ' sessions)</span><span>' + fmt(pr.total) + '</span></div>';
+    if(busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer' || selProg.id === 'girls-bball')){
+      rows += '<div class="bkd-row bus"><span>Bus transportation (' + pr.inst + ' months)</span><span>' + fmt(BUS_MONTHLY * pr.inst) + '</span></div>';
+    }
+    rows += '<div class="bkd-row"><span>Season total</span><span>' + fmt(pr.total + (busMonthly * pr.inst)) + '</span></div>';
+    breakdown.innerHTML = rows;
+  }
+
+  // Update payment options
+  document.getElementById('monthlyPrice').textContent = fmt(totalMonthly);
+  document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments';
+  document.getElementById('lumpPrice').textContent = fmt(pr.total + (busMonthly * pr.inst));
+  document.getElementById('lumpDetail').textContent = 'One payment · ' + pr.rem + ' sessions';
+
+  // Show pricing summary
+  document.getElementById('pricingSummary') && document.getElementById('pricingSummary').classList.add('vis');
+
+  // Show payment card if payment already selected
+  if(selPayment) selectPayment(selPayment);
+}
+
+
+function selectMonth(mi){
+  selMonth = mi;
+  updatePricingDisplay();
+}
+
+function selectPayment(type){
+  selPayment=type;
+  document.getElementById('optMonthly').classList.toggle('selected',type==='monthly');
+  document.getElementById('optLump').classList.toggle('selected',type==='lump');
+  document.getElementById('paymentCard').style.display='block';
+  document.getElementById('payBtn').disabled=false;
+  const pr=calcPricing(selMonth);
+  const amt=type==='monthly'?pr.monthly:pr.total;
+  document.getElementById('payLabel').textContent=`Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':'Full season (5% discount applied)'}`;
+  setTimeout(()=>document.getElementById('paymentCard').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+// ── STRIPE ────────────────────────────────────────────────────────────────────
+function initStripe(){
+  if(stripeEl) return;
+  if(typeof Stripe === 'undefined'){ console.warn('Stripe.js not loaded'); return; }
+  stripeEl=Stripe(STRIPE_PK);
+  const els=stripeEl.elements();
+  stripeCard=els.create('card',{style:{base:{fontFamily:'DM Sans,sans-serif',fontSize:'15px',color:'#1a1a18','::placeholder':{color:'#aaa'}}}});
+  stripeCard.mount('#stripe-element');
+  stripeCard.on('change',e=>{document.getElementById('card-errors').textContent=e.error?e.error.message:'';});
+}
+
+// Maps a registration to the correct WhatsApp group invite link. Only soccer
+// programs have links set up so far — basketball returns null (no button
+// shown) until those groups are added.
+const GRADE_PRE1A_TO_3RD = ['Pre-1A','1st Grade','2nd Grade','3rd Grade'];
+function getWhatsAppGroupLink(progId, session, grade){
+  if(progId === 'toddler-soccer'){
+    return [{link:'https://chat.whatsapp.com/BxJRG9VKdEC5QF9zjgjzH3?mode=gi_t', label:'Join our WhatsApp group'}];
+  }
+  if(progId === 'girls-soccer'){
+    return [{link:'https://chat.whatsapp.com/LRFz0RZR36hIwgvIXaBxhV?mode=gi_t', label:'Join our WhatsApp group'}];
+  }
+  if(progId === 'boys-soccer'){
+    const isYounger = GRADE_PRE1A_TO_3RD.includes(grade);
+    const sunLink = isYounger
+      ? 'https://chat.whatsapp.com/LQjL9Xmal6qJJV9lvokPSW?mode=gi_t'   // Sunday, Pre1A–3rd
+      : 'https://chat.whatsapp.com/C0zChLRipQq8GHT6U5YPtU?mode=gi_t'; // Sunday, 4th–8th
+    const wedLink = isYounger
+      ? 'https://chat.whatsapp.com/EouDtBIWbNNDGzfK4rZyQo?mode=gi_t'  // Wednesday, Pre1A–3rd
+      : 'https://chat.whatsapp.com/JNjMAezyuFRJ9H6Nk9c4q5?mode=gi_t'; // Wednesday, 4th–8th
+    if(session === 'Sunday') return [{link:sunLink, label:'Join our WhatsApp group'}];
+    if(session === 'Wednesday') return [{link:wedLink, label:'Join our WhatsApp group'}];
+    if(session === 'Both') return [{link:sunLink, label:'Join Sunday WhatsApp group'}, {link:wedLink, label:'Join Wednesday WhatsApp group'}];
+    return [{link:sunLink, label:'Join our WhatsApp group'}];
+  }
+  // Basketball programs — no links set up yet
+  return null;
+}
+
+async function handlePayment(){
+  const childFirst=document.getElementById('childFirst').value.trim();
+  const childLast=document.getElementById('childLast').value.trim();
+  const parentName=document.getElementById('parentName').value.trim();
+  const email=document.getElementById('parentEmail').value.trim();
+  const grade = document.getElementById('childGrade') ? document.getElementById('childGrade').value : '';
+  const jerseySize = document.getElementById('jerseySize') ? document.getElementById('jerseySize').value : '';
+  const whatsapp = document.getElementById('whatsappNumber') ? document.getElementById('whatsappNumber').value.trim() : '';
+  if(!childFirst||!childLast||!parentName||!email||!grade||!jerseySize||!whatsapp){
+    document.getElementById('card-errors').textContent='Please fill in all fields above including grade, jersey size, and WhatsApp number.';
+    document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  const btn=document.getElementById('payBtn');
+  const spinner=document.getElementById('spinner');
+  const lbl=document.getElementById('payLabel');
+  btn.disabled=true; spinner.style.display='block'; lbl.textContent='Processing…';
+  const pr=calcPricing(selMonth);
+  const lumpDisc=Math.round(pr.total*(1-0.05)*100)/100; const amt=selPayment==='monthly'?pr.monthly:lumpDisc;
+  const amtCents=Math.round(amt*100);
+  const monthName=selProg.season[selMonth].month;
+  // The bus toggle's checked state was never actually sent to Stripe before —
+  // read it fresh here so it makes it into the metadata below.
+  const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
+  try{
+    const piRes=await fetch('/.netlify/functions/create-payment-intent',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        amount:amtCents,
+        description:`CHS ${selProg.name} — ${childFirst} ${childLast} — ${monthName}`,
+        metadata:{child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'}
+      })
+    });
+    const pi=await piRes.json();
+    if(pi.error) throw new Error(pi.error);
+    const {error}=await stripeEl.confirmCardPayment(pi.clientSecret,{
+      payment_method:{card:stripeCard,billing_details:{name:parentName,email}}
+    });
+    if(error) throw new Error(error.message);
+    document.getElementById('formContent').style.display='none';
+    document.getElementById('successContent').style.display='block';
+    document.getElementById('successMsg').innerHTML=
+      `Welcome, ${childFirst}! 🎉<br>A confirmation will be sent to <strong>${email}</strong>.<br><br>`+
+      (selPayment==='monthly'
+        ?`Your first payment of ${fmt(pr.monthly)} is processed. You'll be billed monthly for ${pr.inst} payments total.`
+        :`Your full season payment of ${fmt(pr.total)} is confirmed. Enjoy all ${pr.rem} games!`);
+    const waLinks = getWhatsAppGroupLink(selProg.id, selectedSession, grade);
+    const waWrap = document.getElementById('successWhatsAppWrap');
+    if(waWrap){
+      let html = (waLinks && waLinks.length)
+        ? waLinks.map(w => `<a href="${w.link}" target="_blank" style="display:inline-block;margin:16px 6px 0;padding:12px 24px;background:#25D366;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">${w.label}</a>`).join('')
+        : '';
+      if(busOn){
+        html += `<p style="margin-top:14px;font-size:13px;color:#6b6b60">🚌 Bus route details will be posted in the WhatsApp group before each game.</p>`;
+      }
+      waWrap.innerHTML = html;
+    }
+  }catch(err){
+    document.getElementById('card-errors').textContent=err.message||"Payment failed. Please try again.";
+    btn.disabled=false; spinner.style.display='none'; lbl.textContent='Try again';
+  }
+}
+
+
+function togglePricingExpand(){
+  const btn = document.getElementById('expandBtn');
+  const body = document.getElementById('pricingExpandBody');
+  btn.classList.toggle('open');
+  body.classList.toggle('vis');
+  // Build calendar when first opened
+  if(body.classList.contains('vis') && document.getElementById('calendarGrid').children.length === 0){
+    buildCalendarGrid();
+  }
+}
+
+function buildCalendarGrid(){
+  if(!selProg) return;
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+
+  // Seasonal programs: just show the two seasons
+  if(selProg.type === 'season'){
+    selProg.season.forEach((m, mi) => {
+      const pr = calcPricing(mi);
+      const btn = document.createElement('div');
+      btn.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:.6rem .75rem;border-radius:8px;margin-bottom:5px;border:1px solid #e0ddd6;background:#fff;font-size:13px;cursor:pointer';
+      btn.innerHTML = '<div><strong>' + m.month + '</strong><span style="color:#888;font-size:12px;margin-left:8px">' + pr.rem + ' sessions</span></div>'
+        + '<div style="text-align:right"><strong style="color:#0f2156">' + fmt(pr.monthly) + '/mo</strong><div style="font-size:11px;color:#888">× 3 payments = ' + fmt(pr.total) + '</div></div>';
+      btn.onclick = () => { selMonth = mi; updatePricingDisplay(); togglePricingExpand(); };
+      grid.appendChild(btn);
+    });
+    return;
+  }
+
+  // Year-long programs: show all months
+  selProg.season.forEach((m, mi) => {
+    const pr = calcPricing(mi);
+    const isBest = mi === 0;
+    const btn = document.createElement('div');
+    btn.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:.6rem .75rem;border-radius:8px;margin-bottom:5px;border:1px solid #e0ddd6;background:' + (isBest ? '#fdf6e3' : '#fff') + ';font-size:13px;cursor:pointer';
+    btn.innerHTML = '<div><strong>' + m.month + '</strong><span style="color:#888;font-size:12px;margin-left:8px">' + pr.rem + ' sessions remaining</span>' + (isBest ? ' <span style="color:#c8a84b;font-size:11px;font-weight:600">⭐ Best deal</span>' : '') + '</div><strong style="color:#0f2156">' + fmt(pr.monthly) + '/mo</strong>';
+    btn.onclick = () => { selMonth = mi; updatePricingDisplay(); togglePricingExpand(); };
+    grid.appendChild(btn);
+  });
+}
+
+
+function toggleScholarship(){
+  const panel = document.getElementById('scholarshipPanel');
+  panel.classList.toggle('vis');
+}
+
+async function submitScholarship(){
+  const childFirst = document.getElementById('childFirst').value.trim();
+  const childLast  = document.getElementById('childLast').value.trim();
+  const email      = document.getElementById('parentEmail').value.trim();
+  const reason     = document.getElementById('scholarshipReason').value.trim();
+  const phone      = document.getElementById('scholarshipPhone').value.trim();
+  const errEl      = document.getElementById('scholarshipError');
+
+  if(!childFirst||!childLast||!email){
+    errEl.textContent = 'Please fill in the child and parent info above first.';
+    document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  if(!reason){
+    errEl.textContent = 'Please provide a reason for your request.';
+    return;
+  }
+  errEl.textContent = '';
+
+  // Send to Stripe as a $0 metadata record / or just show success
+  // For now, submit via a simple fetch to a webhook or just show success
+  try{
+    await fetch('/.netlify/functions/create-payment-intent', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        amount: 0,
+        description: 'Scholarship Waitlist — ' + childFirst + ' ' + childLast,
+        metadata:{
+          type:'scholarship_waitlist',
+          child_name: childFirst + ' ' + childLast,
+          program: selProg ? selProg.name : '',
+          email, phone, reason
+        }
+      })
+    });
+  } catch(e){}
+
+  document.querySelector('.scholarship-submit').style.display = 'none';
+  document.getElementById('scholarshipSuccess').style.display = 'block';
+  document.getElementById('scholarshipReason').disabled = true;
+  document.getElementById('scholarshipPhone').disabled = true;
+}
+
+
+let selectedSession = null;
+
+
+function calcPricingForGames(prog, mi, totalGames){
+  const missed = gamesMissed(mi);
+  const rate = (prog.tuition / totalGames) + INC * missed;
+  const rem = Math.max(0, totalGames - missed);
+  const monthName = (prog.season[mi] && prog.season[mi].month) || 'September';
+  const inst = Math.min(8, MTJ[monthName] || 1);
+  const total = rate * rem;
+  const monthly = total / inst;
+  return {rate, rem, inst, total, monthly};
+}
+
+function selectSession(s){
+  selectedSession = s;
+  document.querySelectorAll('.session-btn').forEach(b => b.classList.remove('on'));
+  const idMap = {'Sunday':'sess-sun','Wednesday':'sess-wed','Both':'sess-both'};
+  document.getElementById(idMap[s]).classList.add('on');
+  const note = document.getElementById('sessionNote');
+  if(s === 'Both'){
+    note.style.display = 'block';
+    note.textContent = '* Sunday and Wednesday are billed as two separate payments but shown combined below.';
+  } else {
+    note.style.display = 'none';
+  }
+  updatePricingDisplay();
+}
+
+
+async function submitScholarshipStep1(){
+  const parentName = document.getElementById('schlParentName').value.trim();
+  const childName  = document.getElementById('schlChildName').value.trim();
+  const program    = document.getElementById('schlProgram').value;
+  const email      = document.getElementById('schlEmail').value.trim();
+  const errEl      = document.getElementById('schlError');
+
+  if(!parentName||!childName||!program||!email){
+    errEl.textContent = 'Please fill in all fields.';
+    return;
+  }
+  errEl.textContent = '';
+
+  // Submit to Netlify Forms
+  try{
+    await fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        'form-name': 'scholarship-waitlist',
+        'parent-name': parentName,
+        'child-name': childName,
+        'program': program,
+        'email': email,
+      }).toString()
+    });
+  } catch(e){ console.log('Form submit error:', e); }
+
+  // Show step 2 regardless
+  document.getElementById('scholarshipStep1').style.display = 'none';
+  document.getElementById('scholarshipStep2').style.display = 'block';
+}
+
+// ── TRIAL MODAL ───────────────────────────────────────────────────────────────
+let trialStripeEl=null, trialCard=null;
+
+
+// ── INLINE TRIAL PANEL ────────────────────────────────────────────────────
+let trialInlineStripeEl=null, trialInlineCard=null;
+
+function openTrialInline(){
+  const panel = document.getElementById('trialInlinePanel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('trialInlineSuccess').style.display = 'none';
+  document.getElementById('trialInlinePayBtn').style.display = 'flex';
+  document.getElementById('trial-inline-errors').textContent = '';
+  if(!trialInlineStripeEl && typeof Stripe !== 'undefined'){
+    trialInlineStripeEl = Stripe(STRIPE_PK);
+    const els = trialInlineStripeEl.elements();
+    trialInlineCard = els.create('card',{style:{base:{fontFamily:'DM Sans,sans-serif',fontSize:'14px',color:'#1a1a18','::placeholder':{color:'#aaa'}}}});
+    trialInlineCard.mount('#trial-inline-stripe');
+    trialInlineCard.on('change',e=>{document.getElementById('trial-inline-errors').textContent=e.error?e.error.message:'';});
+  }
+}
+
+function closeTrialInline(){
+  document.getElementById('trialInlinePanel').style.display = 'none';
+}
+
+async function handleTrialInlinePayment(){
+  const childName = document.getElementById('trialInlineChild').value.trim();
+  const grade     = document.getElementById('trialInlineGrade').value;
+  const program   = document.getElementById('trialInlineProgram').value;
+  const email     = document.getElementById('trialInlineEmail').value.trim();
+  if(!childName||!grade||!program||!email){
+    document.getElementById('trial-inline-errors').textContent = "Please fill in all fields.";
+    return;
+  }
+  const btn=document.getElementById('trialInlinePayBtn');
+  const spinner=document.getElementById('trialInlineSpinner');
+  const lbl=document.getElementById('trialInlineLabel');
+  btn.disabled=true; spinner.style.display='block'; lbl.textContent='Processing...';
+  try{
+    const piRes=await fetch('/.netlify/functions/create-payment-intent',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({amount:2000,description:'CHS Trial Class — '+childName+' — '+program,metadata:{child_name:childName,grade:grade,program:program,email,plan_type:'trial'}})
+    });
+    const pi=await piRes.json();
+    if(pi.error) throw new Error(pi.error);
+    const {error}=await trialInlineStripeEl.confirmCardPayment(pi.clientSecret,{
+      payment_method:{card:trialInlineCard,billing_details:{name:childName,email}}
+    });
+    if(error) throw new Error(error.message);
+    btn.style.display='none';
+    document.getElementById('trialInlineSuccess').style.display='block';
+  }catch(err){
+    document.getElementById('trial-inline-errors').textContent=err.message||'Payment failed. Please try again.';
+    btn.disabled=false; spinner.style.display='none'; lbl.textContent='Book trial class — $20';
+  }
+}
+
+function openTrial(){
+  const progName = selProg ? selProg.name : '';
+  document.getElementById('trialProgName').textContent = progName ? progName + ' — One session, no commitment' : "One session, no commitment";
+  document.getElementById('trialSuccess').style.display='none';
+  document.getElementById('trialPayBtn').style.display='flex';
+  document.getElementById('trial-card-errors').textContent='';
+  document.getElementById('trialModal').classList.add('vis');
+  // Init trial Stripe
+  if(!trialStripeEl){
+    if(typeof Stripe==='undefined') return;
+    trialStripeEl = Stripe(STRIPE_PK);
+    const els = trialStripeEl.elements();
+    trialCard = els.create('card',{style:{base:{fontFamily:'DM Sans,sans-serif',fontSize:'15px',color:'#1a1a18','::placeholder':{color:'#aaa'}}}});
+    trialCard.mount('#trial-stripe-element');
+    trialCard.on('change',e=>{document.getElementById('trial-card-errors').textContent=e.error?e.error.message:'';});
+  }
+}
+function closeTrial(){
+  document.getElementById('trialModal').classList.remove('vis');
+}
+
+async function handleTrialPayment(){
+  const childName = document.getElementById('trialChildName').value.trim();
+  const email     = document.getElementById('trialEmail').value.trim();
+  if(!childName||!email){
+    document.getElementById('trial-card-errors').textContent="Please enter the child's name and your email.";
+    return;
+  }
+  const btn=document.getElementById('trialPayBtn');
+  const spinner=document.getElementById('trialSpinner');
+  const lbl=document.getElementById('trialPayLabel');
+  btn.disabled=true; spinner.style.display='block'; lbl.textContent="Processing...";
+  const progName = selProg ? selProg.name : "Trial Class";
+  try{
+    const piRes=await fetch('/.netlify/functions/create-payment-intent',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        amount:2000,
+        description:"CHS Trial Class — "+progName+" — "+childName,
+        metadata:{child_name:childName,email:email,program:progName,plan_type:"trial"}
+      })
+    });
+    const pi=await piRes.json();
+    if(pi.error) throw new Error(pi.error);
+    const {error}=await trialStripeEl.confirmCardPayment(pi.clientSecret,{
+      payment_method:{card:trialCard,billing_details:{name:childName,email}}
+    });
+    if(error) throw new Error(error.message);
+    btn.style.display='none';
+    document.getElementById('trialSuccess').style.display='block';
+  }catch(err){
+    document.getElementById('trial-card-errors').textContent=err.message||"Payment failed. Please try again.";
+    btn.disabled=false; spinner.style.display='none'; lbl.textContent="Book trial class — $20";
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+[build]
+  functions = "netlify/functions"
+
+[build.environment]
+  # STRIPE_SECRET_KEY only lives in process.env inside the function — it
+  # never appears in any built file, so this is a confirmed safe omission
+  # from the secrets scanner (same reasoning as the dashboard's netlify.toml).
+  SECRETS_SCAN_OMIT_KEYS = "STRIPE_SECRET_KEY"
+
+[functions]
+  node_bundler = "esbuild"
