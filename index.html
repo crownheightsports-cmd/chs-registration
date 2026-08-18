@@ -1395,6 +1395,7 @@ async function handlePayment(){
       body:JSON.stringify({
         amount:amtCents,
         description:`CHS ${selProg.name} — ${childFirst} ${childLast} — ${monthName}`,
+        receipt_email: email,
         metadata:{child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'}
       })
     });
@@ -1629,7 +1630,7 @@ async function handleTrialInlinePayment(){
     const piRes=await fetch('/.netlify/functions/create-payment-intent',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({amount:2000,description:'CHS Trial Class — '+childName+' — '+program,metadata:{child_name:childName,grade:grade,program:program,email,plan_type:'trial'}})
+      body:JSON.stringify({amount:2000,description:'CHS Trial Class — '+childName+' — '+program,receipt_email:email,metadata:{child_name:childName,grade:grade,program:program,email,plan_type:'trial'}})
     });
     const pi=await piRes.json();
     if(pi.error) throw new Error(pi.error);
@@ -1685,6 +1686,7 @@ async function handleTrialPayment(){
       body:JSON.stringify({
         amount:2000,
         description:"CHS Trial Class — "+progName+" — "+childName,
+        receipt_email: email,
         metadata:{child_name:childName,email:email,program:progName,plan_type:"trial"}
       })
     });
