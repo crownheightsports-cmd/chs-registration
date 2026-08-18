@@ -40,7 +40,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid request body' }) };
   }
 
-  const { amount, description, metadata } = body;
+  const { amount, description, metadata, receipt_email } = body;
 
   if (typeof amount !== 'number' || amount < 0 || !Number.isInteger(amount)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'amount must be an integer number of cents' }) };
@@ -77,6 +77,10 @@ exports.handler = async (event) => {
       description: description ? String(description).slice(0, 1000) : undefined,
       metadata: safeMetadata,
       automatic_payment_methods: { enabled: true },
+      // Without this, Stripe never sends a receipt for API-created payments —
+      // the "Successful payments" toggle in Stripe settings only applies to
+      // Stripe-hosted Checkout/Payment Links, not custom integrations like this one.
+      receipt_email: receipt_email ? String(receipt_email).slice(0, 512) : undefined,
     });
 
     return {
