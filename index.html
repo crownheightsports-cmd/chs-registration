@@ -1387,17 +1387,37 @@ async function handlePayment(){
   // The bus toggle's checked state was never actually sent to Stripe before —
   // read it fresh here so it makes it into the metadata below.
   const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
+  const sharedMetadata = {child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'};
   try{
-    const piRes=await fetch('/.netlify/functions/create-payment-intent',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        amount:amtCents,
-        description:`CHS ${selProg.name} — ${childFirst} ${childLast} — ${monthName}`,
-        receipt_email: email,
-        metadata:{child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'}
-      })
-    });
+    let piRes;
+    if(selPayment==='monthly'){
+      // Monthly plans use a real Stripe Subscription — Stripe itself charges
+      // months 2 through pr.inst automatically going forward, including
+      // retries on a failed card, rather than this being a single one-time charge.
+      piRes = await fetch('/.netlify/functions/create-subscription', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          email, name: parentName,
+          monthlyAmount: amtCents,
+          description: `CHS ${selProg.name} — ${childFirst} ${childLast}`,
+          totalPayments: pr.inst,
+          metadata: sharedMetadata,
+        })
+      });
+    } else {
+      // Pay-in-full is a genuine one-time charge — no subscription needed.
+      piRes = await fetch('/.netlify/functions/create-payment-intent',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          amount:amtCents,
+          description:`CHS ${selProg.name} — ${childFirst} ${childLast} — ${monthName}`,
+          receipt_email: email,
+          metadata: sharedMetadata,
+        })
+      });
+    }
     const pi=await piRes.json();
     if(pi.error) throw new Error(pi.error);
     const {error}=await stripeEl.confirmCardPayment(pi.clientSecret,{
@@ -1422,6 +1442,25 @@ async function handlePayment(){
       }
       waWrap.innerHTML = html;
     }
+    // Custom branded confirmation email (WhatsApp button + full CHS styling) —
+    // separate from Stripe's generic receipt. Fire-and-forget: a failure here
+    // should never surface as a broken registration to the family.
+    try{
+      fetch('/.netlify/functions/send-confirmation-email', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          to: email,
+          childName: childFirst+' '+childLast,
+          program: selProg.name,
+          sessionLabel: selectedSession && selectedSession!=='Both' ? selectedSession : '',
+          amountLabel: selPayment==='monthly' ? `${fmt(pr.monthly)} (first of ${pr.inst} monthly payments)` : `${fmt(pr.total)} (paid in full)`,
+          planLabel: selPayment==='monthly' ? 'Monthly installments' : 'Paid in full',
+          busOn,
+          waLinks,
+        }),
+      }).catch(()=>{}); // don't let an email failure affect the registration flow
+    }catch(e){}
   }catch(err){
     document.getElementById('card-errors').textContent=err.message||"Payment failed. Please try again.";
     btn.disabled=false; spinner.style.display='none'; lbl.textContent='Try again';
