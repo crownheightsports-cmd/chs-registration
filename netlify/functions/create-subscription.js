@@ -74,12 +74,19 @@ exports.handler = async (event) => {
     cancelAt.setMonth(cancelAt.getMonth() + totalCycles);
     const cancelAtUnix = Math.floor(cancelAt.getTime() / 1000);
 
+    // Stripe's Subscriptions API doesn't support creating a Product inline via
+    // price_data.product_data the way Checkout Sessions do — it needs a real
+    // Product created first, then referenced by ID.
+    const product = await stripe.products.create({
+      name: description || 'Crown Heights Sports — Monthly Plan',
+    });
+
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{
         price_data: {
           currency: 'usd',
-          product_data: { name: description || 'Crown Heights Sports — Monthly Plan' },
+          product: product.id,
           unit_amount: monthlyAmount,
           recurring: { interval: 'month' },
         },
