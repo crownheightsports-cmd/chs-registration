@@ -1366,7 +1366,15 @@ function getWhatsAppGroupLink(progId, session, grade){
     if(session === 'Both') return [{link:sunLink, label:'Join Sunday WhatsApp group'}, {link:wedLink, label:'Join Wednesday WhatsApp group'}];
     return [{link:sunLink, label:'Join our WhatsApp group'}];
   }
-  // Basketball programs — no links set up yet
+  if(progId === 'boys-bball'){
+    const g4to5 = ['4th Grade','5th Grade'];
+    const g6to8 = ['6th Grade','7th Grade','8th Grade'];
+    if(g4to5.includes(grade)) return [{link:'https://chat.whatsapp.com/JC5u30uYE5x24dRUmYZ7Xx?s=sw&p=a&mlu=4', label:'Join our WhatsApp group'}];
+    if(g6to8.includes(grade)) return [{link:'https://chat.whatsapp.com/EZc3NsXoMfVKrKVDueP3Sk?s=sw&p=a&mlu=4', label:'Join our WhatsApp group'}];
+    // 1st–3rd grade schedule is still TBD — no group exists for them yet.
+    return null;
+  }
+  // Men's Basketball — no link set up yet
   return null;
 }
 
