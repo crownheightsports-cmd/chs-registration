@@ -516,10 +516,14 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
           <div id="stripe-element"></div>
           <div id="card-errors"></div>
         </div>
-        <button class="pay-btn" id="payBtn" onclick="handlePayment()" disabled>
-          <span id="payLabel">Complete registration</span>
-          <div class="spinner" id="spinner"></div>
-        </button>
+       <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#333;margin-bottom:.85rem;cursor:pointer">
+  <input type="checkbox" id="policyCheckbox" onchange="updatePayButtonState()" style="margin-top:3px;flex-shrink:0">
+  <span>I have read the <a href="https://www.crownheightsports.com/policies" target="_blank" style="color:var(--navy);font-weight:600">program policies and guidelines</a></span>
+</label>
+<button class="pay-btn" id="payBtn" onclick="handlePayment()" disabled>
+  <span id="payLabel">Complete registration</span>
+  <div class="spinner" id="spinner"></div>
+</button>
         <p class="secure-note">
           <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           Secured by Stripe
@@ -1324,13 +1328,17 @@ function selectPayment(type){
   document.getElementById('optMonthly').classList.toggle('selected',type==='monthly');
   document.getElementById('optLump').classList.toggle('selected',type==='lump');
   document.getElementById('paymentCard').style.display='block';
-  document.getElementById('payBtn').disabled=false;
+  updatePayButtonState();
   const pr=calcPricing(selMonth);
   const amt=type==='monthly'?pr.monthly:applyPayInFullDiscount(selProg, pr.total);
   document.getElementById('payLabel').textContent=`Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':(hasPayInFullDiscount(selProg)?'Full season (5% discount applied)':'Full season')}`;
   setTimeout(()=>document.getElementById('paymentCard').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
-
+function updatePayButtonState(){
+  const checkbox = document.getElementById('policyCheckbox');
+  const agreed = checkbox && checkbox.checked;
+  document.getElementById('payBtn').disabled = !(selPayment && agreed);
+}
 // ── STRIPE ────────────────────────────────────────────────────────────────────
 function initStripe(){
   if(stripeEl) return;
@@ -1386,7 +1394,12 @@ async function handlePayment(){
   const grade = document.getElementById('childGrade') ? document.getElementById('childGrade').value : '';
   const jerseySize = document.getElementById('jerseySize') ? document.getElementById('jerseySize').value : '';
   const whatsapp = document.getElementById('whatsappNumber') ? document.getElementById('whatsappNumber').value.trim() : '';
-  if(!childFirst||!childLast||!parentName||!email||!grade||!jerseySize||!whatsapp){
+  const policyAgreed = document.getElementById('policyCheckbox') && document.getElementById('policyCheckbox').checked;
+if(!policyAgreed){
+  document.getElementById('card-errors').textContent='Please confirm you\'ve read the program policies and guidelines before continuing.';
+  return;
+}
+if(!childFirst||!childLast||!parentName||!email||!grade||!jerseySize||!whatsapp){
     document.getElementById('card-errors').textContent='Please fill in all fields above including grade, jersey size, and WhatsApp number.';
     document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
     return;
