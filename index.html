@@ -1265,12 +1265,17 @@ function updatePricingDisplay(){
       rows += '<div class="bkd-row"><span>Combined season total</span><span>' + fmt(totalWithBus) + '</span></div>';
       breakdown.innerHTML = rows;
     }
-    document.getElementById('monthlyPrice').textContent = fmt(monthlyBoth);
+      document.getElementById('monthlyPrice').textContent = fmt(monthlyBoth);
     document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments (combined)';
-    document.getElementById('lumpPrice').textContent = fmt(applyPayInFullDiscount(selProg, totalWithBus));
-    document.getElementById('lumpDetail').textContent = 'One payment · 73 sessions total';
-    if(document.getElementById('save5Badge')) document.getElementById('save5Badge').style.display = hasPayInFullDiscount(selProg) ? '' : 'none';
+    const noteElBoth = document.getElementById('payInFullNote');
+    if(noteElBoth){
+      const waLink = 'https://wa.me/15166303422';
+      noteElBoth.innerHTML = hasPayInFullDiscount(selProg)
+        ? `💵 To pay in full, please reach out to us for a <strong>5% discount</strong> — <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">message us on WhatsApp</a>.`
+        : `💵 Want to pay in full instead of monthly? <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">Message us on WhatsApp</a> to arrange it.`;
+    }
     if(document.getElementById('pricingSummary')) document.getElementById('pricingSummary').classList.add('vis');
+    selectPayment('monthly');
     return;
   }
   const totalMonthly = pr.monthly + busMonthly;
