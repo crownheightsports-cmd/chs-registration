@@ -1311,15 +1311,19 @@ function updatePricingDisplay(){
   // Update payment options
   document.getElementById('monthlyPrice').textContent = fmt(totalMonthly);
   document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments';
-  document.getElementById('lumpPrice').textContent = fmt(applyPayInFullDiscount(selProg, pr.total + (busMonthly * pr.inst)));
-  document.getElementById('lumpDetail').textContent = 'One payment · ' + pr.rem + ' sessions';
-  if(document.getElementById('save5Badge')) document.getElementById('save5Badge').style.display = hasPayInFullDiscount(selProg) ? '' : 'none';
+  const noteEl = document.getElementById('payInFullNote');
+  if(noteEl){
+    const waLink = 'https://wa.me/15166303422';
+    noteEl.innerHTML = hasPayInFullDiscount(selProg)
+      ? `💵 To pay in full, please reach out to us for a <strong>5% discount</strong> — <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">message us on WhatsApp</a>.`
+      : `💵 Want to pay in full instead of monthly? <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">Message us on WhatsApp</a> to arrange it.`;
+  }
 
   // Show pricing summary
   document.getElementById('pricingSummary') && document.getElementById('pricingSummary').classList.add('vis');
 
-  // Show payment card if payment already selected
-  if(selPayment) selectPayment(selPayment);
+  // Monthly is now the only plan — always select it automatically
+  selectPayment('monthly');
 }
 
 
