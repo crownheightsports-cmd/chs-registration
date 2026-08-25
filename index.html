@@ -6,14 +6,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register — Crown Heights Sports</title>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-555SQFTC0F"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-555SQFTC0F');
-</script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://js.stripe.com/v3/"></script>
 <style>
@@ -430,15 +422,24 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
 
         <div class="breakdown-box" id="breakdownBox"></div>
 
-<div style="margin-top:1rem">
+        <div style="margin-top:1rem">
           <div class="card-title" style="margin-bottom:.75rem">Payment plan</div>
-          <button class="option-btn" id="optMonthly" onclick="selectPayment('monthly')" style="width:100%">
-            <div class="check-mark"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1"/></svg></div>
-            <div class="opt-lbl">Monthly plan</div>
-            <div class="opt-price" id="monthlyPrice">—</div>
-            <div class="opt-detail" id="monthlyDetail">—</div>
-          </button>
-          <div id="payInFullNote" style="font-size:12px;color:var(--muted);margin-top:.6rem;background:#f0faf4;border:1px solid #1a8f4a;border-radius:8px;padding:.65rem .85rem;line-height:1.6"></div>
+          <div class="options-grid">
+            <button class="option-btn" id="optMonthly" onclick="selectPayment('monthly')">
+              <div class="check-mark"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1"/></svg></div>
+              <div class="opt-lbl">Monthly plan</div>
+              <div class="opt-price" id="monthlyPrice">—</div>
+              <div class="opt-detail" id="monthlyDetail">—</div>
+            </button>
+            <button class="option-btn" id="optLump" onclick="selectPayment('lump')" style="display:none">
+              <div class="check-mark"><svg viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1"/></svg></div>
+              <div class="opt-lbl">Pay in full</div>
+              <div class="opt-price" id="lumpPrice">—</div>
+              <div class="opt-detail" id="lumpDetail">—</div>
+              <div style="font-size:10px;color:#c0392b;margin-top:6px;line-height:1.5">&#9888; <strong>Non-refundable.</strong> By paying in full you waive all opt-out dates. No cancellations or refunds will be issued for any reason.</div>
+            </button>
+          </div>
+          <div id="payInFullNote" style="display:none;font-size:12px;color:var(--muted);margin-top:.6rem;background:#f0faf4;border:1px solid #1a8f4a;border-radius:8px;padding:.65rem .85rem;line-height:1.6"></div>
         </div>
       </div>
 
@@ -516,14 +517,14 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
           <div id="stripe-element"></div>
           <div id="card-errors"></div>
         </div>
-       <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#333;margin-bottom:.85rem;cursor:pointer">
-  <input type="checkbox" id="policyCheckbox" onchange="updatePayButtonState()" style="margin-top:3px;flex-shrink:0">
-  <span>I have read the <a href="https://www.crownheightsports.com/policies" target="_blank" style="color:var(--navy);font-weight:600">program policies and guidelines</a></span>
-</label>
-<button class="pay-btn" id="payBtn" onclick="handlePayment()" disabled>
-  <span id="payLabel">Complete registration</span>
-  <div class="spinner" id="spinner"></div>
-</button>
+        <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#333;margin-bottom:.85rem;cursor:pointer">
+          <input type="checkbox" id="policyCheckbox" onchange="updatePayButtonState()" style="margin-top:3px;flex-shrink:0">
+          <span>I have read the <a href="https://www.crownheightsports.com/policies" target="_blank" style="color:var(--navy);font-weight:600">program policies and guidelines</a></span>
+        </label>
+        <button class="pay-btn" id="payBtn" onclick="handlePayment()" disabled>
+          <span id="payLabel">Complete registration</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
         <p class="secure-note">
           <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           Secured by Stripe
@@ -800,11 +801,6 @@ const PROG_FEATURES = {
   <circle cx="40" cy="30" r="9" fill="#f47c20"/>
   <circle cx="40" cy="30" r="5" fill="#fff"/>
 </svg></div><div class=\"icon-badge-label\">Lubavitch Yeshiva · Crown St</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
-  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
-  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
-  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
-  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
-</svg></div><div class=\"icon-badge-label\">1st to 8th grade</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
   <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
   <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
   <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
@@ -988,7 +984,7 @@ const PROGRAMS = [
       BASE+'64dbbb06b036517905a80043/1765143062826/PXL_20230507_215054008.PORTRAIT.jpg?format=600w',
     ],
     highlights:[{i:'🏀',t:'Grade-based schedule'},{i:'📍',t:'Lubavitch Yeshiva'},{i:'👦',t:'1st – 8th grade'},{i:'🦺',t:'Professional refs every game'}],
-    desc:'Weeknight games at Lubavitch Yeshiva in Crown Heights, scheduled by grade — 6th–8th grade plays Tuesdays, 4th–5th grade plays Mondays, and 1st–3rd grade scheduling will be announced separately. Players grouped by age with dedicated coaches. Professional referees each session.',
+    desc:'Weeknight games at Lubavitch Yeshiva in Crown Heights, scheduled by grade — 6th–8th grade plays Tuesdays, 4th–5th grade plays Thursdays, and 1st–3rd grade scheduling will be announced separately. Players grouped by age with dedicated coaches. Professional referees each session.',
     commit:'Year-long program · 33 Monday or 35 Thursday games · Monthly payment plan available',
     awards:['Weekly medal — 1st to 3rd grade','Personalized trophy — 4th to 8th grade','Championship trophy — top team'],
     season:[
@@ -1092,7 +1088,7 @@ const PROG_SCHEDULES = {
   'boys-bball': `
       <div class="schedule-block">
         <div class="schedule-row"><span class="sched-icon">🕔</span><div><strong>1st – 3rd grade</strong><div class="sched-sub">Day & time to be determined</div></div></div>
-       <div class="schedule-row"><span class="sched-icon">🕕</span><div><strong>4th – 5th grade · Thursdays</strong><div class="sched-sub">6:15–7:15pm · Aug 31 – June 2027</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🕕</span><div><strong>4th – 5th grade · Thursdays</strong><div class="sched-sub">6:15–7:15pm · Aug 31 – June 2027</div></div></div>
         <div class="schedule-row"><span class="sched-icon">🕖</span><div><strong>6th – 8th grade · Tuesdays</strong><div class="sched-sub">7:30–8:45pm · Aug 31 – June 2027</div></div></div>
         <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>Lubavitch Yeshiva</strong><div class="sched-sub">Crown St, Brooklyn, NY</div></div></div>
         <div class="schedule-row"><span class="sched-icon">🦺</span><div><strong>Professional referees at every game</strong></div></div>
@@ -1181,7 +1177,6 @@ const MTJ = {
 // Whether this program's pay-in-full option gets the 5% discount.
 // Defaults to true unless a program explicitly opts out (payInFullDiscount:false).
 function hasPayInFullDiscount(p){ return p && p.payInFullDiscount !== false; }
-function applyPayInFullDiscount(p, amount){ return hasPayInFullDiscount(p) ? Math.round(amount*(1-0.05)*100)/100 : amount; }
 
 function calcPricing(mi){
   // Seasonal programs: 3 monthly payments
@@ -1239,18 +1234,37 @@ function updatePricingDisplay(){
   const busOn = document.getElementById('busToggleInput') &&
                 document.getElementById('busToggleInput').checked;
   const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
+
+  const lumpBtn = document.getElementById('optLump');
+  const noteEl = document.getElementById('payInFullNote');
+  const allowOnlineLump = !hasPayInFullDiscount(selProg);
+  const waLink = 'https://wa.me/15166303422';
+
+  function applyLumpUI(lumpTotal, lumpDetailText){
+    if(allowOnlineLump){
+      if(lumpBtn) lumpBtn.style.display = '';
+      if(noteEl) noteEl.style.display = 'none';
+      document.getElementById('optMonthly').style.gridColumn = 'auto';
+      document.getElementById('lumpPrice').textContent = fmt(lumpTotal);
+      document.getElementById('lumpDetail').textContent = lumpDetailText;
+    } else {
+      if(lumpBtn) lumpBtn.style.display = 'none';
+      document.getElementById('optMonthly').style.gridColumn = '1 / -1';
+      if(noteEl){
+        noteEl.style.display = 'block';
+        noteEl.innerHTML = `💵 To pay in full, please reach out to us for a <strong>5% discount</strong> — <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">message us on WhatsApp</a>.`;
+      }
+    }
+  }
+
   // If "Both" sessions selected for Boys Soccer, calculate Sun + Wed separately
-  let sessionMultiplier = 1;
-  let sessionLabel = '';
   if(selProg.id === 'boys-soccer' && selectedSession === 'Both'){
-    // Sunday: 36 sessions, Wednesday: 37 sessions, both at same per-game rate
-    const sunGames = selProg.season ? selProg.season.filter((m,i) => gamesRemaining(i) > 0).length : 36;
     const prSun = calcPricingForGames(selProg, selMonth, 36);
     const prWed = calcPricingForGames(selProg, selMonth, 37);
     const totalBoth = prSun.total + prWed.total;
     const monthlyBoth = (prSun.monthly + prWed.monthly) + busMonthly;
     const totalWithBus = totalBoth + (busOn ? BUS_MONTHLY * pr.inst : 0);
-    // Override display
+
     const mainEl = document.getElementById('priceNowMain');
     if(mainEl){ mainEl.textContent = fmt(monthlyBoth) + '/mo'; mainEl.classList.toggle('bus-added', busOn); }
     const detEl = document.getElementById('priceNowDetail');
@@ -1265,22 +1279,15 @@ function updatePricingDisplay(){
       rows += '<div class="bkd-row"><span>Combined season total</span><span>' + fmt(totalWithBus) + '</span></div>';
       breakdown.innerHTML = rows;
     }
-      document.getElementById('monthlyPrice').textContent = fmt(monthlyBoth);
+    document.getElementById('monthlyPrice').textContent = fmt(monthlyBoth);
     document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments (combined)';
-    const noteElBoth = document.getElementById('payInFullNote');
-    if(noteElBoth){
-      const waLink = 'https://wa.me/15166303422';
-      noteElBoth.innerHTML = hasPayInFullDiscount(selProg)
-        ? `💵 To pay in full, please reach out to us for a <strong>5% discount</strong> — <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">message us on WhatsApp</a>.`
-        : `💵 Want to pay in full instead of monthly? <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">Message us on WhatsApp</a> to arrange it.`;
-    }
+    applyLumpUI(totalWithBus, 'One payment · 73 sessions total');
     if(document.getElementById('pricingSummary')) document.getElementById('pricingSummary').classList.add('vis');
-    selectPayment('monthly');
+    selectPayment((selPayment && !(!allowOnlineLump && selPayment==='lump')) ? selPayment : 'monthly');
     return;
   }
   const totalMonthly = pr.monthly + busMonthly;
-  const totalLump = pr.total + (busMonthly * pr.inst);
-  const monthName = selProg.season[selMonth] ? selProg.season[selMonth].month : '';
+  const monthName=selProg.season[selMonth] ? selProg.season[selMonth].month : '';
 
   // Show/hide bus toggle
   const busCard = document.getElementById('busToggleCard');
@@ -1311,19 +1318,14 @@ function updatePricingDisplay(){
   // Update payment options
   document.getElementById('monthlyPrice').textContent = fmt(totalMonthly);
   document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments';
-  const noteEl = document.getElementById('payInFullNote');
-  if(noteEl){
-    const waLink = 'https://wa.me/15166303422';
-    noteEl.innerHTML = hasPayInFullDiscount(selProg)
-      ? `💵 To pay in full, please reach out to us for a <strong>5% discount</strong> — <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">message us on WhatsApp</a>.`
-      : `💵 Want to pay in full instead of monthly? <a href="${waLink}" target="_blank" style="color:#1a8f4a;font-weight:600">Message us on WhatsApp</a> to arrange it.`;
-  }
+  applyLumpUI(pr.total + (busMonthly * pr.inst), 'One payment · ' + pr.rem + ' sessions');
 
   // Show pricing summary
   document.getElementById('pricingSummary') && document.getElementById('pricingSummary').classList.add('vis');
 
-  // Monthly is now the only plan — always select it automatically
-  selectPayment('monthly');
+  // Keep whatever plan was already selected; fall back to Monthly if the
+  // program switched to one where Pay in Full isn't offered online.
+  selectPayment((selPayment && !(!allowOnlineLump && selPayment==='lump')) ? selPayment : 'monthly');
 }
 
 
@@ -1339,15 +1341,17 @@ function selectPayment(type){
   document.getElementById('paymentCard').style.display='block';
   updatePayButtonState();
   const pr=calcPricing(selMonth);
-  const amt=type==='monthly'?pr.monthly:applyPayInFullDiscount(selProg, pr.total);
-  document.getElementById('payLabel').textContent=`Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':(hasPayInFullDiscount(selProg)?'Full season (5% discount applied)':'Full season')}`;
+  const amt=type==='monthly'?pr.monthly:pr.total;
+  document.getElementById('payLabel').textContent=`Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':'Full season'}`;
   setTimeout(()=>document.getElementById('paymentCard').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
+
 function updatePayButtonState(){
   const checkbox = document.getElementById('policyCheckbox');
   const agreed = checkbox && checkbox.checked;
   document.getElementById('payBtn').disabled = !(selPayment && agreed);
 }
+
 // ── STRIPE ────────────────────────────────────────────────────────────────────
 function initStripe(){
   if(stripeEl) return;
@@ -1404,11 +1408,11 @@ async function handlePayment(){
   const jerseySize = document.getElementById('jerseySize') ? document.getElementById('jerseySize').value : '';
   const whatsapp = document.getElementById('whatsappNumber') ? document.getElementById('whatsappNumber').value.trim() : '';
   const policyAgreed = document.getElementById('policyCheckbox') && document.getElementById('policyCheckbox').checked;
-if(!policyAgreed){
-  document.getElementById('card-errors').textContent='Please confirm you\'ve read the program policies and guidelines before continuing.';
-  return;
-}
-if(!childFirst||!childLast||!parentName||!email||!grade||!jerseySize||!whatsapp){
+  if(!policyAgreed){
+    document.getElementById('card-errors').textContent='Please confirm you\'ve read the program policies and guidelines before continuing.';
+    return;
+  }
+  if(!childFirst||!childLast||!parentName||!email||!grade||!jerseySize||!whatsapp){
     document.getElementById('card-errors').textContent='Please fill in all fields above including grade, jersey size, and WhatsApp number.';
     document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
     return;
@@ -1418,7 +1422,7 @@ if(!childFirst||!childLast||!parentName||!email||!grade||!jerseySize||!whatsapp)
   const lbl=document.getElementById('payLabel');
   btn.disabled=true; spinner.style.display='block'; lbl.textContent='Processing…';
   const pr=calcPricing(selMonth);
-  const lumpDisc=applyPayInFullDiscount(selProg, pr.total); const amt=selPayment==='monthly'?pr.monthly:lumpDisc;
+  const amt=selPayment==='monthly'?pr.monthly:pr.total;
   const amtCents=Math.round(amt*100);
   const monthName=selProg.season[selMonth].month;
   // The bus toggle's checked state was never actually sent to Stripe before —
@@ -1553,51 +1557,6 @@ function toggleScholarship(){
   panel.classList.toggle('vis');
 }
 
-async function submitScholarship(){
-  const childFirst = document.getElementById('childFirst').value.trim();
-  const childLast  = document.getElementById('childLast').value.trim();
-  const email      = document.getElementById('parentEmail').value.trim();
-  const reason     = document.getElementById('scholarshipReason').value.trim();
-  const phone      = document.getElementById('scholarshipPhone').value.trim();
-  const errEl      = document.getElementById('scholarshipError');
-
-  if(!childFirst||!childLast||!email){
-    errEl.textContent = 'Please fill in the child and parent info above first.';
-    document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
-    return;
-  }
-  if(!reason){
-    errEl.textContent = 'Please provide a reason for your request.';
-    return;
-  }
-  errEl.textContent = '';
-
-  // Send to Stripe as a $0 metadata record / or just show success
-  // For now, submit via a simple fetch to a webhook or just show success
-  try{
-    await fetch('/.netlify/functions/create-payment-intent', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        amount: 0,
-        description: 'Scholarship Waitlist — ' + childFirst + ' ' + childLast,
-        metadata:{
-          type:'scholarship_waitlist',
-          child_name: childFirst + ' ' + childLast,
-          program: selProg ? selProg.name : '',
-          email, phone, reason
-        }
-      })
-    });
-  } catch(e){}
-
-  document.querySelector('.scholarship-submit').style.display = 'none';
-  document.getElementById('scholarshipSuccess').style.display = 'block';
-  document.getElementById('scholarshipReason').disabled = true;
-  document.getElementById('scholarshipPhone').disabled = true;
-}
-
-
 let selectedSession = null;
 
 
@@ -1681,7 +1640,6 @@ function updateGradeOptionsForProgram(programSelectId, gradeSelectId){
   const list = isBasketball ? GRADE_OPTIONS_NO_TODDLER : GRADE_OPTIONS_FULL;
   const prevValue = gradeEl.value;
   gradeEl.innerHTML = '<option value="">Select grade...</option>' + list.map(g => `<option>${g}</option>`).join('');
-  // Keep the previous selection if it's still valid for this program; otherwise reset.
   gradeEl.value = list.includes(prevValue) ? prevValue : '';
 }
 
