@@ -1424,7 +1424,6 @@ async function handlePayment(){
   const lbl=document.getElementById('payLabel');
   btn.disabled=true; spinner.style.display='block'; lbl.textContent='Processing…';
   const pr=calcPricing(selMonth);
-  const pr=calcPricing(selMonth);
   const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
   const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
   const amt=(selPayment==='monthly'?pr.monthly:pr.total) + (selPayment==='monthly'?busMonthly:busMonthly*pr.inst);
