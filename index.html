@@ -1341,7 +1341,9 @@ function selectPayment(type){
   document.getElementById('paymentCard').style.display='block';
   updatePayButtonState();
   const pr=calcPricing(selMonth);
-  const amt=type==='monthly'?pr.monthly:pr.total;
+  const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
+  const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
+  const amt=(type==='monthly'?pr.monthly:pr.total) + (type==='monthly'?busMonthly:busMonthly*pr.inst);
   document.getElementById('payLabel').textContent=`Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':'Full season'}`;
   setTimeout(()=>document.getElementById('paymentCard').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
@@ -1422,12 +1424,12 @@ async function handlePayment(){
   const lbl=document.getElementById('payLabel');
   btn.disabled=true; spinner.style.display='block'; lbl.textContent='Processing…';
   const pr=calcPricing(selMonth);
-  const amt=selPayment==='monthly'?pr.monthly:pr.total;
+  const pr=calcPricing(selMonth);
+  const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
+  const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
+  const amt=(selPayment==='monthly'?pr.monthly:pr.total) + (selPayment==='monthly'?busMonthly:busMonthly*pr.inst);
   const amtCents=Math.round(amt*100);
   const monthName=selProg.season[selMonth].month;
-  // The bus toggle's checked state was never actually sent to Stripe before —
-  // read it fresh here so it makes it into the metadata below.
-  const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
   const sharedMetadata = {child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'};
   try{
     let piRes;
