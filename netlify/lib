@@ -1,0 +1,34 @@
+// Opens a Netlify Blobs store, preferring Netlify's automatically-injected
+// credentials (zero-config) since those are always correct for a store
+// living on this same site. Falls back to explicit BLOBS_SITE_ID/BLOBS_TOKEN
+// only if the runtime doesn't supply automatic credentials — and surfaces a
+// clear, actionable error if that fallback token turns out to be invalid,
+// instead of the opaque generic 401 Blobs normally throws.
+const { getStore } = require('@netlify/blobs');
+
+function openStore(name) {
+  try {
+    return getStore(name);
+  } catch (err) {
+    const siteID = process.env.BLOBS_SITE_ID;
+    const token = process.env.BLOBS_TOKEN;
+    if (!siteID || !token) {
+      throw new Error('The environment has not been configured to use Netlify Blobs, and no BLOBS_SITE_ID/BLOBS_TOKEN fallback is set.');
+    }
+    return getStore({ name, siteID, token });
+  }
+}
+
+async function withStore(name, fn) {
+  const store = openStore(name);
+  try {
+    return await fn(store);
+  } catch (err) {
+    if (err && err.message && err.message.includes('401')) {
+      throw new Error("Netlify Blobs rejected the request (401) — the BLOBS_TOKEN in this site's environment variables is invalid, expired, or revoked. Remove BLOBS_SITE_ID/BLOBS_TOKEN so Netlify's automatic credentials are used instead.");
+    }
+    throw err;
+  }
+}
+
+module.exports = { openStore, withStore };
