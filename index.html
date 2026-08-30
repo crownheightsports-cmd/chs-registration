@@ -290,6 +290,9 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
         <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Program to try</label><select id="trialInlineProgram" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18" onchange="updateGradeOptionsForProgram('trialInlineProgram','trialInlineGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
         <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Parent email</label><input type="email" id="trialInlineEmail" placeholder="rivka@email.com" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">WhatsApp number</label><input type="tel" id="trialInlineWhatsapp" placeholder="(718) 000-0000" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+      </div>
       <div id="trial-inline-stripe" style="border:1px solid #e8e5df;border-radius:8px;padding:10px 12px;margin-bottom:.75rem;background:#fff"></div>
       <div id="trial-inline-errors" style="color:#c0392b;font-size:13px;margin-bottom:.5rem;min-height:16px"></div>
       <button id="trialInlinePayBtn" onclick="handleTrialInlinePayment()" style="width:100%;background:#0f2156;color:#fff;border:none;border-radius:10px;padding:.85rem;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">
@@ -564,6 +567,9 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
       <div class="field-row" style="margin-bottom:.75rem">
         <div class="field"><label>Program to try</label><select id="trialProgSelect" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff" onchange="updateGradeOptionsForProgram('trialProgSelect','trialChildGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
         <div class="field"><label>Parent email</label><input type="email" id="trialEmail" placeholder="rivka@email.com"></div>
+      </div>
+      <div class="field-row" style="margin-bottom:.75rem">
+        <div class="field"><label>WhatsApp number</label><input type="tel" id="trialWhatsapp" placeholder="(718) 000-0000"></div>
       </div>
       <div id="trial-stripe-element" style="border:1px solid var(--border);border-radius:8px;padding:11px 13px;background:var(--white);margin-bottom:.75rem"></div>
       <div id="trial-card-errors" style="color:#c0392b;font-size:13px;margin-bottom:.5rem;min-height:16px"></div>
@@ -1669,8 +1675,9 @@ async function handleTrialInlinePayment(){
   const grade     = document.getElementById('trialInlineGrade').value;
   const program   = document.getElementById('trialInlineProgram').value;
   const email     = document.getElementById('trialInlineEmail').value.trim();
-  if(!childName||!grade||!program||!email){
-    document.getElementById('trial-inline-errors').textContent = "Please fill in all fields.";
+  const whatsapp  = document.getElementById('trialInlineWhatsapp').value.trim();
+  if(!childName||!grade||!program||!email||!whatsapp){
+    document.getElementById('trial-inline-errors').textContent = "Please fill in all fields, including your WhatsApp number.";
     return;
   }
   const btn=document.getElementById('trialInlinePayBtn');
@@ -1681,7 +1688,7 @@ async function handleTrialInlinePayment(){
     const piRes=await fetch('/.netlify/functions/create-payment-intent',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({amount:2000,description:'CHS Trial Class — '+childName+' — '+program,receipt_email:email,metadata:{child_name:childName,grade:grade,program:program,email,plan_type:'trial'}})
+      body:JSON.stringify({amount:2000,description:'CHS Trial Class — '+childName+' — '+program,receipt_email:email,metadata:{child_name:childName,grade:grade,program:program,email,whatsapp,plan_type:'trial'}})
     });
     const pi=await piRes.json();
     if(pi.error) throw new Error(pi.error);
@@ -1721,8 +1728,9 @@ function closeTrial(){
 async function handleTrialPayment(){
   const childName = document.getElementById('trialChildName').value.trim();
   const email     = document.getElementById('trialEmail').value.trim();
-  if(!childName||!email){
-    document.getElementById('trial-card-errors').textContent="Please enter the child's name and your email.";
+  const whatsapp  = document.getElementById('trialWhatsapp').value.trim();
+  if(!childName||!email||!whatsapp){
+    document.getElementById('trial-card-errors').textContent="Please enter the child's name, your email, and your WhatsApp number.";
     return;
   }
   const btn=document.getElementById('trialPayBtn');
@@ -1738,7 +1746,7 @@ async function handleTrialPayment(){
         amount:2000,
         description:"CHS Trial Class — "+progName+" — "+childName,
         receipt_email: email,
-        metadata:{child_name:childName,email:email,program:progName,plan_type:"trial"}
+        metadata:{child_name:childName,email:email,whatsapp:whatsapp,program:progName,plan_type:"trial"}
       })
     });
     const pi=await piRes.json();
