@@ -443,6 +443,13 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
             </button>
           </div>
           <div id="payInFullNote" style="display:none;font-size:12px;color:var(--muted);margin-top:.6rem;background:#f0faf4;border:1px solid #1a8f4a;border-radius:8px;padding:.65rem .85rem;line-height:1.6"></div>
+          <div style="margin-top:.75rem">
+            <div style="display:flex;gap:8px">
+              <input type="text" id="discountCodeInput" placeholder="Discount code (optional)" style="flex:1;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;text-transform:uppercase">
+              <button type="button" onclick="applyDiscountCode()" style="padding:9px 16px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Apply</button>
+            </div>
+            <div id="discountCodeMsg" style="font-size:12px;margin-top:6px;min-height:16px"></div>
+          </div>
         </div>
       </div>
 
@@ -1025,6 +1032,7 @@ const PROGRAMS = [
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let selProg = null, selMonth = null, selPayment = null, galIdx = {};
+let appliedDiscount = null; // { code, amount } once a valid discount code has been checked
 let stripeEl = null, stripeCard = null;
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -1251,8 +1259,12 @@ function updatePricingDisplay(){
       if(lumpBtn) lumpBtn.style.display = '';
       if(noteEl) noteEl.style.display = 'none';
       document.getElementById('optMonthly').style.gridColumn = 'auto';
-      document.getElementById('lumpPrice').textContent = fmt(lumpTotal);
-      document.getElementById('lumpDetail').textContent = lumpDetailText;
+      // A valid discount code reduces the Pay in Full total directly, since
+      // that's a single real-time charge — unlike Monthly, where the
+      // discount is deferred to the final invoice and applied manually.
+      const discounted = appliedDiscount ? Math.max(0, lumpTotal - appliedDiscount.amount) : lumpTotal;
+      document.getElementById('lumpPrice').textContent = fmt(discounted);
+      document.getElementById('lumpDetail').textContent = lumpDetailText + (appliedDiscount ? ` · $${appliedDiscount.amount} off applied` : '');
     } else {
       if(lumpBtn) lumpBtn.style.display = 'none';
       document.getElementById('optMonthly').style.gridColumn = '1 / -1';
@@ -1285,8 +1297,12 @@ function updatePricingDisplay(){
       rows += '<div class="bkd-row"><span>Combined season total</span><span>' + fmt(totalWithBus) + '</span></div>';
       breakdown.innerHTML = rows;
     }
-    document.getElementById('monthlyPrice').textContent = fmt(monthlyBoth);
-    document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments (combined)';
+    // A discount code spreads evenly across every monthly installment —
+    // each payment is simply a fixed amount lower, rather than one lump
+    // reduction at the end.
+    const monthlyDiscountPerPayment = appliedDiscount ? appliedDiscount.amount / pr.inst : 0;
+    document.getElementById('monthlyPrice').textContent = fmt(Math.max(0, monthlyBoth - monthlyDiscountPerPayment));
+    document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments (combined)' + (appliedDiscount ? ` · $${monthlyDiscountPerPayment.toFixed(2)} off each` : '');
     applyLumpUI(totalWithBus, 'One payment · 73 sessions total');
     if(document.getElementById('pricingSummary')) document.getElementById('pricingSummary').classList.add('vis');
     selectPayment((selPayment && !(!allowOnlineLump && selPayment==='lump')) ? selPayment : 'monthly');
@@ -1322,8 +1338,12 @@ function updatePricingDisplay(){
   }
 
   // Update payment options
-  document.getElementById('monthlyPrice').textContent = fmt(totalMonthly);
-  document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments';
+  // A discount code spreads evenly across every monthly installment —
+  // each payment is simply a fixed amount lower, rather than one lump
+  // reduction at the end.
+  const monthlyDiscountPerPayment = appliedDiscount ? appliedDiscount.amount / pr.inst : 0;
+  document.getElementById('monthlyPrice').textContent = fmt(Math.max(0, totalMonthly - monthlyDiscountPerPayment));
+  document.getElementById('monthlyDetail').textContent = pr.inst + ' monthly payments' + (appliedDiscount ? ` · $${monthlyDiscountPerPayment.toFixed(2)} off each` : '');
   applyLumpUI(pr.total + (busMonthly * pr.inst), 'One payment · ' + pr.rem + ' sessions');
 
   // Show pricing summary
@@ -1358,6 +1378,46 @@ function updatePayButtonState(){
   const checkbox = document.getElementById('policyCheckbox');
   const agreed = checkbox && checkbox.checked;
   document.getElementById('payBtn').disabled = !(selPayment && agreed);
+}
+
+// Checks (but doesn't yet consume) a discount code against the backend.
+// Requires an email to already be entered, since the 2-uses-per-email limit
+// is tracked by email. The actual "use" is only recorded after a successful
+// payment (see handlePayment), so an abandoned checkout never burns a use.
+async function applyDiscountCode(){
+  const code = document.getElementById('discountCodeInput').value.trim();
+  const email = document.getElementById('parentEmail').value.trim();
+  const msgEl = document.getElementById('discountCodeMsg');
+  if(!code){ msgEl.textContent = ''; appliedDiscount = null; updatePricingDisplay(); return; }
+  if(!email){
+    msgEl.textContent = 'Please enter your email above first, then apply the code.';
+    msgEl.style.color = '#c0392b';
+    return;
+  }
+  msgEl.textContent = 'Checking code…';
+  msgEl.style.color = '#6b6b60';
+  try{
+    const res = await fetch('/.netlify/functions/discount-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, email, action: 'check' }),
+    });
+    const data = await res.json();
+    if(!data.valid){
+      appliedDiscount = null;
+      msgEl.textContent = data.reason || 'That code is not valid.';
+      msgEl.style.color = '#c0392b';
+    } else {
+      appliedDiscount = { code: code.toUpperCase(), amount: data.discountAmount };
+      msgEl.textContent = `✓ $${data.discountAmount} discount applied (${data.usesRemaining} use${data.usesRemaining!==1?'s':''} left on this code for your email).`;
+      msgEl.style.color = '#1a8f4a';
+    }
+  }catch(err){
+    appliedDiscount = null;
+    msgEl.textContent = 'Could not check that code right now — please try again.';
+    msgEl.style.color = '#c0392b';
+  }
+  if(selMonth !== null && selProg) updatePricingDisplay();
 }
 
 // ── STRIPE ────────────────────────────────────────────────────────────────────
@@ -1432,10 +1492,22 @@ async function handlePayment(){
   const pr=calcPricing(selMonth);
   const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
   const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
-  const amt=(selPayment==='monthly'?pr.monthly:pr.total) + (selPayment==='monthly'?busMonthly:busMonthly*pr.inst);
+  const baseAmt=(selPayment==='monthly'?pr.monthly:pr.total) + (selPayment==='monthly'?busMonthly:busMonthly*pr.inst);
+  // Monthly: spread the discount evenly across every installment — each
+  // charge is simply this fixed amount lower, automatically, every month.
+  // Pay in Full: it's a single charge, so the full discount comes off at once.
+  const monthlyDiscountPerPayment = (selPayment==='monthly' && appliedDiscount) ? appliedDiscount.amount / pr.inst : 0;
+  const amt = selPayment==='monthly'
+    ? Math.max(0, baseAmt - monthlyDiscountPerPayment)
+    : (appliedDiscount ? Math.max(0, baseAmt - appliedDiscount.amount) : baseAmt);
   const amtCents=Math.round(amt*100);
   const monthName=selProg.season[selMonth].month;
   const sharedMetadata = {child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'};
+  if(appliedDiscount){
+    sharedMetadata.discount_code = appliedDiscount.code;
+    sharedMetadata.discount_amount = appliedDiscount.amount;
+    if(selPayment==='monthly') sharedMetadata.discount_per_payment = Math.round(monthlyDiscountPerPayment*100)/100;
+  }
   try{
     let piRes;
     if(selPayment==='monthly'){
@@ -1472,13 +1544,25 @@ async function handlePayment(){
       payment_method:{card:stripeCard,billing_details:{name:parentName,email}}
     });
     if(error) throw new Error(error.message);
+    // Only now — after the charge has actually succeeded — record that this
+    // code was used, so an abandoned checkout never burns one of the two
+    // uses on a family's email.
+    if(appliedDiscount){
+      try{
+        await fetch('/.netlify/functions/discount-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: appliedDiscount.code, email, action: 'redeem' }),
+        });
+      }catch(e){ console.error('Failed to redeem discount code:', e); }
+    }
     document.getElementById('formContent').style.display='none';
     document.getElementById('successContent').style.display='block';
     document.getElementById('successMsg').innerHTML=
       `Welcome, ${childFirst}! 🎉<br>A confirmation will be sent to <strong>${email}</strong>.<br><br>`+
       (selPayment==='monthly'
-        ?`Your first payment of ${fmt(pr.monthly)} is processed. You'll be billed monthly for ${pr.inst} payments total.`
-        :`Your full season payment of ${fmt(pr.total)} is confirmed. Enjoy all ${pr.rem} games!`);
+        ?`Your first payment of ${fmt(amt)} is processed. You'll be billed monthly for ${pr.inst} payments total.`+(appliedDiscount?` A $${monthlyDiscountPerPayment.toFixed(2)} discount has been applied to each of your ${pr.inst} payments.`:'')
+        :`Your full season payment of ${fmt(amt)} is confirmed${appliedDiscount?` ($${appliedDiscount.amount} discount applied)`:''}. Enjoy all ${pr.rem} games!`);
     const waLinks = getWhatsAppGroupLink(selProg.id, selectedSession, grade);
     const waWrap = document.getElementById('successWhatsAppWrap');
     if(waWrap){
