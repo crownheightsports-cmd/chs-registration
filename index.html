@@ -417,9 +417,23 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
               </div>
             </div>
             <label class="bus-slider-wrap">
-              <input type="checkbox" id="busToggleInput" onchange="updatePricingDisplay()">
+              <input type="checkbox" id="busToggleInput" onchange="toggleBusAddressFields();updatePricingDisplay()">
               <span class="bus-slider"></span>
             </label>
+          </div>
+          <div id="busAddressFields" style="display:none;margin-top:.85rem;padding-top:.85rem;border-top:1px solid rgba(26,143,74,.2)">
+            <div style="font-size:11px;color:#1a5c1a;margin-bottom:.6rem;line-height:1.6">📍 For safety and route efficiency, kids may be dropped at a nearby corner rather than directly at the door. If you have a corner preference, please include it below — we'll do our best to honor it.</div>
+            <div class="field" style="margin-bottom:.6rem">
+              <label style="color:#1a5c1a">Pickup address / corner preference</label>
+              <input type="text" id="busPickupAddress" placeholder="e.g. Corner of Kingston Ave & Crown St">
+            </div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#1a5c1a;margin-bottom:.6rem">
+              <input type="checkbox" id="busSameDropoff" checked onchange="toggleDropoffField()"> Drop-off address is the same
+            </label>
+            <div class="field" id="busDropoffWrap" style="display:none">
+              <label style="color:#1a5c1a">Drop-off address / corner preference</label>
+              <input type="text" id="busDropoffAddress" placeholder="e.g. Corner of Kingston Ave & Crown St">
+            </div>
           </div>
         </div>
 
@@ -1380,6 +1394,24 @@ function updatePayButtonState(){
   document.getElementById('payBtn').disabled = !(selPayment && agreed);
 }
 
+// Shows/hides the pickup & drop-off address fields based on whether bus
+// transportation is currently toggled on.
+function toggleBusAddressFields(){
+  const on = document.getElementById('busToggleInput').checked;
+  const wrap = document.getElementById('busAddressFields');
+  if(wrap) wrap.style.display = on ? 'block' : 'none';
+  if(on) toggleDropoffField();
+}
+
+// "Drop-off is the same as pickup" is checked by default, since that's the
+// overwhelmingly common case — only show a separate drop-off field if
+// they explicitly say it's different.
+function toggleDropoffField(){
+  const same = document.getElementById('busSameDropoff').checked;
+  const wrap = document.getElementById('busDropoffWrap');
+  if(wrap) wrap.style.display = same ? 'none' : 'block';
+}
+
 // Checks (but doesn't yet consume) a discount code against the backend.
 // Requires an email to already be entered, since the 2-uses-per-email limit
 // is tracked by email. The actual "use" is only recorded after a successful
@@ -1485,6 +1517,15 @@ async function handlePayment(){
     document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
     return;
   }
+  const busSelected = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
+  const busPickupAddress = busSelected ? document.getElementById('busPickupAddress').value.trim() : '';
+  const busSameDropoff = document.getElementById('busSameDropoff') && document.getElementById('busSameDropoff').checked;
+  const busDropoffAddress = busSelected ? (busSameDropoff ? busPickupAddress : document.getElementById('busDropoffAddress').value.trim()) : '';
+  if(busSelected && (!busPickupAddress || !busDropoffAddress)){
+    document.getElementById('card-errors').textContent='Please enter a pickup address or corner preference (and drop-off, if different) for bus transportation.';
+    document.getElementById('formContent').scrollIntoView({behavior:'smooth'});
+    return;
+  }
   const btn=document.getElementById('payBtn');
   const spinner=document.getElementById('spinner');
   const lbl=document.getElementById('payLabel');
@@ -1503,6 +1544,10 @@ async function handlePayment(){
   const amtCents=Math.round(amt*100);
   const monthName=selProg.season[selMonth].month;
   const sharedMetadata = {child_name:childFirst+' '+childLast,parent_name:parentName,email:email,whatsapp:whatsapp,program:selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),grade:grade,jersey_size:jerseySize,signup_month:monthName,plan_type:selPayment,remaining_payments:pr.inst,bus_service:busOn?'yes':'no'};
+  if(busSelected){
+    sharedMetadata.bus_pickup_address = busPickupAddress;
+    sharedMetadata.bus_dropoff_address = busDropoffAddress;
+  }
   if(appliedDiscount){
     sharedMetadata.discount_code = appliedDiscount.code;
     sharedMetadata.discount_amount = appliedDiscount.amount;
