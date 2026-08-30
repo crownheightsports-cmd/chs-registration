@@ -1435,6 +1435,16 @@ async function applyDiscountCode(){
       body: JSON.stringify({ code, email, action: 'check' }),
     });
     const data = await res.json();
+    // A real server error (500, etc) returns {error: "..."} — not
+    // {valid: false}. Without checking res.ok first, that used to get
+    // mislabeled as "code not valid" even when the code was actually fine
+    // and the server itself had failed.
+    if(!res.ok){
+      appliedDiscount = null;
+      msgEl.textContent = 'Something went wrong checking that code (' + (data.error || 'server error') + ') — please try again in a moment.';
+      msgEl.style.color = '#c0392b';
+      return;
+    }
     if(!data.valid){
       appliedDiscount = null;
       msgEl.textContent = data.reason || 'That code is not valid.';
