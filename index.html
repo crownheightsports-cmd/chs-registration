@@ -269,11 +269,11 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
       </div>
       <div style="font-size:13px;color:#6b6b60;margin-bottom:1rem;line-height:1.65">One trial per child &middot; No transportation included &middot; Must be booked at least 24 hours before the session &middot; Older groups: until mid-October only</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
-        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Child's name</label><input type="text" id="trialInlineChild" placeholder="Moshe Cohen" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Child's name *</label><input type="text" id="trialInlineChild" required placeholder="Moshe Cohen" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
         <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Child's grade</label><select id="trialInlineGrade" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
-        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Program to try</label><select id="trialInlineProgram" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18" onchange="updateGradeOptionsForProgram('trialInlineProgram','trialInlineGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Program to try *</label><select id="trialInlineProgram" required style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18" onchange="updateGradeOptionsForProgram('trialInlineProgram','trialInlineGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
         <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Parent email</label><input type="email" id="trialInlineEmail" placeholder="rivka@email.com" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
@@ -328,8 +328,8 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
       <div class="card">
         <div class="card-title">Child & parent information</div>
         <div class="field-row">
-          <div class="field"><label>Child's first name</label><input type="text" id="childFirst" placeholder="Moshe"></div>
-          <div class="field"><label>Child's last name</label><input type="text" id="childLast" placeholder="Cohen"></div>
+          <div class="field"><label>Child's first name *</label><input type="text" id="childFirst" required placeholder="Moshe"></div>
+          <div class="field"><label>Child's last name *</label><input type="text" id="childLast" required placeholder="Cohen"></div>
         </div>
         <div class="field-row">
           <div class="field"><label>Parent / guardian name</label><input type="text" id="parentName" placeholder="Rivka Cohen"></div>
@@ -568,11 +568,11 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
     </div>
     <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
       <div class="field-row" style="margin-bottom:.75rem">
-        <div class="field"><label>Child's name</label><input type="text" id="trialChildName" placeholder="Moshe Cohen"></div>
+        <div class="field"><label>Child's name *</label><input type="text" id="trialChildName" required placeholder="Moshe Cohen"></div>
         <div class="field"><label>Child's grade *</label><select id="trialChildGrade" required style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
       </div>
       <div class="field-row" style="margin-bottom:.75rem">
-        <div class="field"><label>Program to try</label><select id="trialProgSelect" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff" onchange="updateGradeOptionsForProgram('trialProgSelect','trialChildGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
+        <div class="field"><label>Program to try *</label><select id="trialProgSelect" required style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff" onchange="updateGradeOptionsForProgram('trialProgSelect','trialChildGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
         <div class="field"><label>Parent email</label><input type="email" id="trialEmail" placeholder="rivka@email.com"></div>
       </div>
       <div class="field-row" style="margin-bottom:.75rem">
@@ -1825,6 +1825,19 @@ function openTrial(){
   document.getElementById('trialSuccess').style.display='none';
   document.getElementById('trialPayBtn').style.display='flex';
   document.getElementById('trial-card-errors').textContent='';
+  // Pre-fill the program dropdown only when the current page maps unambiguously
+  // to one dropdown option. Boys Soccer intentionally has no single mapping
+  // (the page doesn't say Sunday vs. Wednesday), so it's left blank and the
+  // person must explicitly choose — same as if they opened the trial modal
+  // directly from the homepage.
+  const TRIAL_PROGRAM_MAP = {
+    'toddler-soccer': 'Toddler Soccer',
+    'girls-soccer': 'Girls Soccer',
+    'boys-bball': 'Boys Basketball',
+  };
+  const progSelect = document.getElementById('trialProgSelect');
+  progSelect.value = (selProg && TRIAL_PROGRAM_MAP[selProg.id]) ? TRIAL_PROGRAM_MAP[selProg.id] : '';
+  updateGradeOptionsForProgram('trialProgSelect','trialChildGrade');
   document.getElementById('trialModal').classList.add('vis');
   // Init trial Stripe
   if(!trialStripeEl){
@@ -1843,17 +1856,18 @@ function closeTrial(){
 async function handleTrialPayment(){
   const childName = document.getElementById('trialChildName').value.trim();
   const grade     = document.getElementById('trialChildGrade').value;
+  const program   = document.getElementById('trialProgSelect').value;
   const email     = document.getElementById('trialEmail').value.trim();
   const whatsapp  = document.getElementById('trialWhatsapp').value.trim();
-  if(!childName||!grade||!email||!whatsapp){
-    document.getElementById('trial-card-errors').textContent="Please enter the child's name, grade, your email, and your WhatsApp number.";
+  if(!childName||!grade||!program||!email||!whatsapp){
+    document.getElementById('trial-card-errors').textContent="Please enter the child's name, grade, program, your email, and your WhatsApp number.";
     return;
   }
   const btn=document.getElementById('trialPayBtn');
   const spinner=document.getElementById('trialSpinner');
   const lbl=document.getElementById('trialPayLabel');
   btn.disabled=true; spinner.style.display='block'; lbl.textContent="Processing...";
-  const progName = selProg ? selProg.name : "Trial Class";
+  const progName = program;
   try{
     const piRes=await fetch('/.netlify/functions/create-payment-intent',{
       method:'POST',
