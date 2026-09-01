@@ -26,20 +26,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);
 .screen{display:none}.screen.active{display:block}
 
 /* ── HOME ── */
-.hero-wrap{position:relative;height:360px;overflow:hidden;background:var(--navy)}
-.hero-track{display:flex;height:360px;transition:transform .7s cubic-bezier(.4,0,.2,1)}
-.hero-slide{flex-shrink:0;width:100%;height:360px;position:relative}
-.hero-slide img{width:100%;height:360px;object-fit:cover;display:block}
-.hero-slide:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.05),rgba(8,18,55,.82))}
-.hero-logo{position:absolute;top:20px;left:0;right:0;display:flex;justify-content:center;z-index:3}
-.hero-logo img{height:50px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
-.hero-inner{position:absolute;bottom:0;left:0;right:0;max-width:1200px;margin:0 auto;padding:2.5rem;z-index:2}
-.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:.3rem}
-.hero-name{font-family:'DM Serif Display',serif;font-size:2.4rem;color:#fff;font-weight:400;line-height:1.15;margin-bottom:.3rem}
-.hero-sub{font-size:14px;color:rgba(255,255,255,.75)}
-.hero-dots{position:absolute;bottom:18px;right:24px;display:flex;gap:6px;z-index:3}
-.hdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;padding:0;transition:all .25s}
-.hdot.on{background:#fff;width:22px;border-radius:4px}
 .season-strip{background:var(--navy);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
 .ss-text{font-size:13px;font-weight:600;color:#fff}
 .ss-badge{font-size:11px;background:var(--orange);color:#fff;padding:3px 14px;border-radius:999px;font-weight:600}
@@ -350,15 +336,15 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
           <div class="field"><label>Email address</label><input type="email" id="parentEmail" placeholder="rivka@email.com"></div>
         </div>
         <div class="field-row">
-          <div class="field"><label>WhatsApp number</label>
-            <input type="tel" id="whatsappNumber" placeholder="(718) 000-0000" style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none">
+          <div class="field"><label>WhatsApp number *</label>
+            <input type="tel" id="whatsappNumber" placeholder="(718) 000-0000" required style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none">
             <div style="font-size:11px;color:#6b6b60;margin-top:4px">Used to add you to the program WhatsApp group</div>
           </div>
           <div class="field" style="display:flex;align-items:flex-end"><div style="font-size:12px;color:#6b6b60;padding-bottom:4px">&#128241; Make sure this number has WhatsApp</div></div>
         </div>
         <div class="field-row">
-          <div class="field"><label>Child's grade</label>
-            <select id="childGrade" style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none;background:#fff">
+          <div class="field"><label>Child's grade *</label>
+            <select id="childGrade" required style="width:100%;padding:10px 13px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a18;outline:none;background:#fff">
               <option value="">Select grade...</option>
               <option>Toddler (Age 3–5)</option>
               <option>Pre-1A</option>
@@ -583,14 +569,14 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
     <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
       <div class="field-row" style="margin-bottom:.75rem">
         <div class="field"><label>Child's name</label><input type="text" id="trialChildName" placeholder="Moshe Cohen"></div>
-        <div class="field"><label>Child's grade</label><select id="trialChildGrade" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
+        <div class="field"><label>Child's grade *</label><select id="trialChildGrade" required style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
       </div>
       <div class="field-row" style="margin-bottom:.75rem">
         <div class="field"><label>Program to try</label><select id="trialProgSelect" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff" onchange="updateGradeOptionsForProgram('trialProgSelect','trialChildGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
         <div class="field"><label>Parent email</label><input type="email" id="trialEmail" placeholder="rivka@email.com"></div>
       </div>
       <div class="field-row" style="margin-bottom:.75rem">
-        <div class="field"><label>WhatsApp number</label><input type="tel" id="trialWhatsapp" placeholder="(718) 000-0000"></div>
+        <div class="field"><label>WhatsApp number *</label><input type="tel" id="trialWhatsapp" required placeholder="(718) 000-0000"></div>
       </div>
       <div id="trial-stripe-element" style="border:1px solid var(--border);border-radius:8px;padding:11px 13px;background:var(--white);margin-bottom:.75rem"></div>
       <div id="trial-card-errors" style="color:#c0392b;font-size:13px;margin-bottom:.5rem;min-height:16px"></div>
@@ -1060,16 +1046,6 @@ function getNextOptDate(){
   const n = OPT_DATES.find(d=>d>new Date());
   return n ? n.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
 }
-
-// ── HERO CAROUSEL ─────────────────────────────────────────────────────────────
-let heroIdx = 0;
-function heroPan(i){
-  heroIdx=(i+4)%4;
-  document.getElementById('heroTrack').style.transform=`translateX(-${heroIdx*100}%)`;
-  document.querySelectorAll('#heroDots .hdot').forEach((d,j)=>d.classList.toggle('on',j===heroIdx));
-}
-document.querySelectorAll('#heroDots .hdot').forEach((d,i)=>d.onclick=()=>heroPan(i));
-setInterval(()=>heroPan(heroIdx+1),3500);
 
 // ── BUILD HOME GRIDS ──────────────────────────────────────────────────────────
 ['soccer','bball'].forEach(sport=>{
@@ -1866,10 +1842,11 @@ function closeTrial(){
 
 async function handleTrialPayment(){
   const childName = document.getElementById('trialChildName').value.trim();
+  const grade     = document.getElementById('trialChildGrade').value;
   const email     = document.getElementById('trialEmail').value.trim();
   const whatsapp  = document.getElementById('trialWhatsapp').value.trim();
-  if(!childName||!email||!whatsapp){
-    document.getElementById('trial-card-errors').textContent="Please enter the child's name, your email, and your WhatsApp number.";
+  if(!childName||!grade||!email||!whatsapp){
+    document.getElementById('trial-card-errors').textContent="Please enter the child's name, grade, your email, and your WhatsApp number.";
     return;
   }
   const btn=document.getElementById('trialPayBtn');
@@ -1885,7 +1862,7 @@ async function handleTrialPayment(){
         amount:2000,
         description:"CHS Trial Class — "+progName+" — "+childName,
         receipt_email: email,
-        metadata:{child_name:childName,email:email,whatsapp:whatsapp,program:progName,plan_type:"trial"}
+        metadata:{child_name:childName,grade:grade,email:email,whatsapp:whatsapp,program:progName,plan_type:"trial"}
       })
     });
     const pi=await piRes.json();
