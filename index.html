@@ -459,7 +459,7 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
           <div id="payInFullNote" style="display:none;font-size:12px;color:var(--muted);margin-top:.6rem;background:#f0faf4;border:1px solid #1a8f4a;border-radius:8px;padding:.65rem .85rem;line-height:1.6"></div>
           <div style="margin-top:.75rem">
             <div style="display:flex;gap:8px">
-              <input type="text" id="discountCodeInput" placeholder="Discount code (optional)" style="flex:1;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;text-transform:uppercase">
+              <input type="text" id="discountCodeInput" placeholder="Promo / discount / scholarship code (optional)" style="flex:1;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;text-transform:uppercase">
               <button type="button" onclick="applyDiscountCode()" style="padding:9px 16px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Apply</button>
             </div>
             <div id="discountCodeMsg" style="font-size:12px;margin-top:6px;min-height:16px"></div>
@@ -1047,6 +1047,11 @@ const PROGRAMS = [
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let selProg = null, selMonth = null, selPayment = null, galIdx = {};
 let appliedDiscount = null; // { code, amount } once a valid discount code has been checked
+let appliedScholarship = null; // { code, donorName } once a valid scholarship code has been checked
+// Your dashboard site — scholarship codes are managed there, and this
+// registration site calls it directly (a different domain) to submit a
+// pending scholarship registration for admin review after checkout.
+const DASHBOARD_ORIGIN = 'https://prismatic-scone-86875d.netlify.app';
 let stripeEl = null, stripeCard = null;
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -1384,7 +1389,9 @@ function selectPayment(type){
   const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
   const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
   const amt=(type==='monthly'?pr.monthly:pr.total) + (type==='monthly'?busMonthly:busMonthly*pr.inst);
-  document.getElementById('payLabel').textContent=`Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':'Full season'}`;
+  document.getElementById('payLabel').textContent = appliedScholarship
+    ? 'Complete registration — covered by ' + appliedScholarship.donorName
+    : `Pay ${fmt(amt)} — ${type==='monthly'?'First of '+pr.inst+' payments':'Full season'}`;
   setTimeout(()=>document.getElementById('paymentCard').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
@@ -1420,7 +1427,7 @@ async function applyDiscountCode(){
   const code = document.getElementById('discountCodeInput').value.trim();
   const email = document.getElementById('parentEmail').value.trim();
   const msgEl = document.getElementById('discountCodeMsg');
-  if(!code){ msgEl.textContent = ''; appliedDiscount = null; updatePricingDisplay(); return; }
+  if(!code){ msgEl.textContent = ''; appliedDiscount = null; appliedScholarship = null; updatePricingDisplay(); return; }
   if(!email){
     msgEl.textContent = 'Please enter your email above first, then apply the code.';
     msgEl.style.color = '#c0392b';
@@ -1440,25 +1447,32 @@ async function applyDiscountCode(){
     // mislabeled as "code not valid" even when the code was actually fine
     // and the server itself had failed.
     if(!res.ok){
-      appliedDiscount = null;
+      appliedDiscount = null; appliedScholarship = null;
       msgEl.textContent = 'Something went wrong checking that code (' + (data.error || 'server error') + ') — please try again in a moment.';
       msgEl.style.color = '#c0392b';
       return;
     }
     if(!data.valid){
-      appliedDiscount = null;
+      appliedDiscount = null; appliedScholarship = null;
       msgEl.textContent = data.reason || 'That code is not valid.';
       msgEl.style.color = '#c0392b';
+    } else if(data.type === 'scholarship'){
+      appliedDiscount = null;
+      appliedScholarship = { code: code.toUpperCase(), donorName: data.donorName };
+      msgEl.textContent = `✓ Scholarship confirmed — covered by ${data.donorName}. No payment will be collected. Your registration will be reviewed before it's finalized.`;
+      msgEl.style.color = '#1a8f4a';
     } else {
+      appliedScholarship = null;
       appliedDiscount = { code: code.toUpperCase(), amount: data.discountAmount };
       msgEl.textContent = `✓ $${data.discountAmount} discount applied (${data.usesRemaining} use${data.usesRemaining!==1?'s':''} left on this code for your email).`;
       msgEl.style.color = '#1a8f4a';
     }
   }catch(err){
-    appliedDiscount = null;
+    appliedDiscount = null; appliedScholarship = null;
     msgEl.textContent = 'Could not check that code right now — please try again.';
     msgEl.style.color = '#c0392b';
   }
+  if(selPayment) selectPayment(selPayment); // refresh the pay button label immediately
   if(selMonth !== null && selProg) updatePricingDisplay();
 }
 
@@ -1543,6 +1557,52 @@ async function handlePayment(){
   const pr=calcPricing(selMonth);
   const busOn = document.getElementById('busToggleInput') && document.getElementById('busToggleInput').checked;
   const busMonthly = (busOn && (selProg.id === 'boys-soccer' || selProg.id === 'girls-soccer')) ? BUS_MONTHLY : 0;
+
+  // Scholarship path — completely bypasses Stripe. No card is ever charged.
+  // Redeeming the code (via the shared discount-code system) consumes a use
+  // right away, but the registration itself only becomes ACTIVE once an
+  // admin approves it on the dashboard — this is the safety net if the code
+  // ever ends up somewhere it shouldn't.
+  if(appliedScholarship){
+    try{
+      const redeemRes = await fetch('/.netlify/functions/discount-code', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'redeem', code: appliedScholarship.code, email }),
+      });
+      const redeemData = await redeemRes.json();
+      if(!redeemRes.ok || !redeemData.valid){
+        document.getElementById('card-errors').textContent = redeemData.reason || redeemData.error || 'Could not apply that scholarship code — please try again.';
+        btn.disabled=false; spinner.style.display='none'; lbl.textContent='Try again';
+        return;
+      }
+      const res = await fetch(DASHBOARD_ORIGIN + '/.netlify/functions/scholarship', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          action:'submit', code: appliedScholarship.code, donorName: appliedScholarship.donorName, email,
+          childName: childFirst+' '+childLast, parentName, whatsapp, grade, jerseySize,
+          program: selProg.name+(selProg.id==='boys-soccer'&&selectedSession?' ('+selectedSession+')':''),
+          session: (selProg.id==='boys-soccer'&&selectedSession) ? selectedSession : 'General',
+          planType: selPayment,
+          monthlyRate: pr.monthly + busMonthly,
+        }),
+      });
+      const data = await res.json();
+      if(!res.ok){
+        document.getElementById('card-errors').textContent = data.error || 'Could not submit your registration — please try again.';
+        btn.disabled=false; spinner.style.display='none'; lbl.textContent='Try again';
+        return;
+      }
+      document.getElementById('formContent').style.display='none';
+      document.getElementById('successContent').style.display='block';
+      document.getElementById('successMsg').innerHTML=
+        `Thank you, ${childFirst}! 🎉<br>No payment was collected — this program is generously covered by <strong>${appliedScholarship.donorName}</strong>.<br><br>Your registration is now pending a quick review by our team before it's finalized. A confirmation will be sent to <strong>${email}</strong> once approved.`;
+    }catch(err){
+      document.getElementById('card-errors').textContent = 'Could not reach the server right now — please try again.';
+      btn.disabled=false; spinner.style.display='none'; lbl.textContent='Try again';
+    }
+    return;
+  }
+
   const baseAmt=(selPayment==='monthly'?pr.monthly:pr.total) + (selPayment==='monthly'?busMonthly:busMonthly*pr.inst);
   // Monthly: spread the discount evenly across every installment — each
   // charge is simply this fixed amount lower, automatically, every month.
