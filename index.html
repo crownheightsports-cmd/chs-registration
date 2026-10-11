@@ -287,7 +287,7 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
         <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Child's grade</label><select id="trialInlineGrade" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
-        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Program to try</label><select id="trialInlineProgram" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18" onchange="updateGradeOptionsForProgram('trialInlineProgram','trialInlineGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
+        <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Program to try</label><select id="trialInlineProgram" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;color:#1a1a18" onchange="updateGradeOptionsForProgram('trialInlineProgram','trialInlineGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option><option>Girls Basketball</option></select></div>
         <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:5px">Parent email</label><input type="email" id="trialInlineEmail" placeholder="rivka@email.com" style="width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:.75rem">
@@ -493,6 +493,7 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
                 <option>Boys Soccer — Both</option>
                 <option>Girls Soccer</option>
                 <option>Boys Basketball</option>
+                <option>Girls Basketball</option>
                 
               </select></div>
             <div><label style="display:block;font-size:12px;font-weight:600;color:#6b6b60;margin-bottom:4px">Email address</label>
@@ -586,7 +587,7 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
         <div class="field"><label>Child's grade</label><select id="trialChildGrade" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff"><option value="">Select grade...</option><option>Toddler (Age 3-5)</option><option>Pre-1A</option><option>1st Grade</option><option>2nd Grade</option><option>3rd Grade</option><option>4th Grade</option><option>5th Grade</option><option>6th Grade</option><option>7th Grade</option><option>8th Grade</option><option>Adult</option></select></div>
       </div>
       <div class="field-row" style="margin-bottom:.75rem">
-        <div class="field"><label>Program to try</label><select id="trialProgSelect" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff" onchange="updateGradeOptionsForProgram('trialProgSelect','trialChildGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option></select></div>
+        <div class="field"><label>Program to try</label><select id="trialProgSelect" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff" onchange="updateGradeOptionsForProgram('trialProgSelect','trialChildGrade')"><option value="">Select program...</option><option>Toddler Soccer</option><option>Boys Soccer — Sunday</option><option>Boys Soccer — Wednesday</option><option>Girls Soccer</option><option>Boys Basketball</option><option>Girls Basketball</option></select></div>
         <div class="field"><label>Parent email</label><input type="email" id="trialEmail" placeholder="rivka@email.com"></div>
       </div>
       <div class="field-row" style="margin-bottom:.75rem">
@@ -875,6 +876,29 @@ const PROG_FEATURES = {
   <rect x="36" y="48" width="8" height="12" fill="#0f2156"/>
   <path d="M18,16 L62,16 L62,46 C62,54 52,60 40,60 C28,60 18,54 18,46 Z" fill="#0f2156" opacity="0.15"/>
 </svg></div><div class=\"icon-badge-label\">Championship competition</div></div>`,
+  'girls-bball': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Wednesdays 5:45-6:45pm</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">German School</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="26" cy="22" r="10" fill="#0f2156"/>
+  <circle cx="54" cy="22" r="10" fill="#f47c20"/>
+  <path d="M10,52 C10,40 17,35 26,35 C35,35 42,40 42,52 L42,58 L10,58 Z" fill="#0f2156"/>
+  <path d="M38,52 C38,40 45,35 54,35 C63,35 70,40 70,52 L70,58 L38,58 Z" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">4th to 8th grade</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div>`,
   'mens-bball': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
   <circle cx="40" cy="40" r="28" fill="#0f2156"/>
   <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
@@ -1027,6 +1051,22 @@ const PROGRAMS = [
     ],
   },
   {
+    id:'girls-bball', sport:'bball', payInFullDiscount:false,
+    name:'Girls Basketball', tuition:500, games:12, type:'season',
+    day:'Wednesdays', time:'5:45–6:45pm', grades:'4th – 8th grade',
+    photo: BASE+'64f7e3aa651cc5686aa5c799/1693967274152/PXL_20230522_213143921.PORTRAIT.jpg?format=600w',
+    photos:[
+      BASE+'64f7e3aa651cc5686aa5c799/1693967274152/PXL_20230522_213143921.PORTRAIT.jpg?format=600w',
+    ],
+    highlights:[{i:'🏀',t:'Wednesdays 5:45–6:45pm'},{i:'📍',t:'German School'},{i:'👧',t:'4th – 8th grade'},{i:'🗓️',t:'12 sessions · Oct 14 – Dec 30'}],
+    desc:'A brand-new basketball program for girls in 4th through 8th grade, for beginners and experienced players alike. Weekly Wednesday sessions at the German School, coached in a fun, supportive setting.',
+    commit:'Seasonal program · 12 sessions · Oct 14 – Dec 30 · Per-season pricing',
+    awards:[],
+    season:[
+      {month:'Season', games:[{d:'Oct 14',c:false},{d:'Oct 21',c:false},{d:'Oct 28',c:false},{d:'Nov 4',c:false},{d:'Nov 11',c:false},{d:'Nov 18',c:false},{d:'Nov 25',c:false},{d:'Dec 2',c:false},{d:'Dec 9',c:false},{d:'Dec 16',c:false},{d:'Dec 23',c:false},{d:'Dec 30',c:false}]},
+    ],
+  },
+  {
     id:'mens-bball', sport:'bball', payInFullDiscount:false,
     name:"Men's Basketball", tuition:400, games:10, type:'season',
     day:'Mon & Thu', time:'evenings', grades:'Adults · League format',
@@ -1125,6 +1165,13 @@ const PROG_SCHEDULES = {
         <div class="schedule-row"><span class="sched-icon">🕢</span><div><strong>6th – 8th grade · Tuesdays 7:30–8:45pm</strong><div class="sched-sub">Lubavitch Yeshiva, Crown St · Starts Oct 6</div></div></div>
         <div class="schedule-row"><span class="sched-icon">🦺</span><div><strong>Professional referees at every game</strong></div></div>
         <div class="schedule-note">All groups play on Tuesdays. Season runs through June 2027.</div>
+      </div>`,
+  'girls-bball': `
+      <div class="schedule-block">
+        <div class="schedule-row"><span class="sched-icon">🕕</span><div><strong>Wednesdays 5:45–6:45pm</strong><div class="sched-sub">4th – 8th grade</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>German School</strong></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Oct 14 – Dec 30</strong><div class="sched-sub">12 sessions · First session Wednesday, Oct 14</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🚗</span><div><strong>No bus service</strong><div class="sched-sub">Drop-off and pick-up by parent required</div></div></div>
       </div>`,
   'mens-bball': `
       <div class="schedule-block">
@@ -1517,6 +1564,9 @@ function getWhatsAppGroupLink(progId, session, grade){
     if(g6to8.includes(grade)) return [{link:'https://chat.whatsapp.com/EZc3NsXoMfVKrKVDueP3Sk?s=sw&p=a&mlu=4', label:'Join our WhatsApp group'}];
     // 1st–3rd grade schedule is still TBD — no group exists for them yet.
     return null;
+  }
+  if(progId === 'girls-bball'){
+    return [{link:'https://chat.whatsapp.com/BEmmOHYPV3j2O1zvRaJK0O', label:'Join our WhatsApp group'}];
   }
   // Men's Basketball — no link set up yet
   return null;
