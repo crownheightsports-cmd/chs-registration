@@ -246,6 +246,9 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
 .session-btn{padding:.5rem 1.1rem;border-radius:8px;border:1.5px solid #1a3a8f;background:#fff;font-size:13px;font-weight:500;color:#0f2156;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .session-btn.on{background:#0f2156;color:#fff;border-color:#0f2156}
 
+.req-star{color:#c0392b;font-weight:700}
+.field-missing{border-color:#c0392b!important;background:#fff6f5!important;box-shadow:0 0 0 2px rgba(192,57,43,.15)}
+.choice-missing{outline:2px solid #c0392b;outline-offset:3px;border-radius:10px}
 </style>
 </head>
 <body>
@@ -560,6 +563,7 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
           <input type="checkbox" id="policyCheckbox" onchange="updatePayButtonState()" style="margin-top:3px;flex-shrink:0">
           <span>I have read the <a href="https://www.crownheightsports.com/policies" target="_blank" style="color:var(--navy);font-weight:600">program policies and guidelines</a></span>
         </label>
+        <div id="reqStatus" style="display:none;font-size:12px;color:#c0392b;margin:-.25rem 0 .6rem;line-height:1.5"></div>
         <button class="pay-btn" id="payBtn" onclick="handlePayment()" disabled>
           <span id="payLabel">Complete registration</span>
           <div class="spinner" id="spinner"></div>
@@ -922,15 +926,49 @@ const PROG_FEATURES = {
   <circle cx="40" cy="36" r="10" fill="#0f2156" opacity="0.2"/>
   <text x="40" y="40" font-family="Arial Black" font-size="11" font-weight="900" fill="white" text-anchor="middle">CHS</text>
 </svg></div><div class=\"icon-badge-label\">Seasonal trophies</div></div>`,
-  'mens-bball': `
-      <div class="schedule-block">
-        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Mondays — 2 games</strong><div class="sched-sub">8:00–9:15pm and 9:00–10:15pm</div></div></div>
-        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Wednesdays — 4 games</strong><div class="sched-sub">Two games at 8:00–9:15pm and two at 9:00–10:15pm, on two courts</div></div></div>
-        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>The Armory</strong><div class="sched-sub">Two courts</div></div></div>
-        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Starts Monday, Oct 26</strong><div class="sched-sub">73 games: full round robin plus playoffs, through mid-January</div></div></div>
-        <div class="schedule-row"><span class="sched-icon">🦺</span><div><strong>Professional referees at every game</strong></div></div>
-        <div class="schedule-note">12 teams of 6, formed through a draft before the season begins. Full league standings updated throughout the season.</div>
-      </div>`,
+  'mens-bball': `<div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="40" r="28" fill="#0f2156"/>
+  <circle cx="40" cy="40" r="23" fill="#e8edf8"/>
+  <circle cx="40" cy="40" r="18" fill="#0f2156"/>
+  <line x1="40" y1="40" x2="40" y2="26" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="40" x2="52" y2="46" stroke="#f47c20" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="3" fill="#f47c20"/>
+</svg></div><div class=\"icon-badge-label\">Mon &amp; Wed nights</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,10 C28,10 20,19 20,30 C20,46 40,68 40,68 C40,68 60,46 60,30 C60,19 52,10 40,10 Z" fill="#0f2156"/>
+  <circle cx="40" cy="30" r="9" fill="#f47c20"/>
+  <circle cx="40" cy="30" r="5" fill="#fff"/>
+</svg></div><div class=\"icon-badge-label\">The Armory</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M20,15 L8,28 L20,32 L20,65 L60,65 L60,32 L72,28 L60,15 L50,22 C45,26 35,26 30,22 Z" fill="#0f2156"/>
+  <path d="M20,15 L8,28 L20,32 L20,40 L8,28 Z" fill="#f47c20"/>
+  <path d="M60,15 L72,28 L60,32 L60,40 L72,28 Z" fill="#f47c20"/>
+  <text x="40" y="52" font-family="Arial Black" font-size="16" font-weight="900" fill="white" text-anchor="middle">CH</text>
+  <text x="40" y="63" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.7)" text-anchor="middle">CROWN HEIGHTS</text>
+</svg></div><div class=\"icon-badge-label\">Jersey included</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="40" cy="18" r="11" fill="#0f2156"/>
+  <rect x="22" y="34" width="36" height="28" rx="4" fill="#0f2156"/>
+  <rect x="22" y="34" width="9" height="28" rx="0" fill="#f47c20"/>
+  <rect x="40" y="34" width="9" height="28" fill="#f47c20"/>
+  <rect x="58" y="34" width="4" height="28" rx="4" fill="#0f2156" opacity="0.01"/>
+  <rect x="22" y="43" width="36" height="3" fill="#f47c20"/>
+  <rect x="22" y="52" width="36" height="3" fill="#f47c20"/>
+  <path d="M34,62 L30,76 M46,62 L50,76" stroke="#0f2156" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="52" r="6" fill="#f47c20"/>
+  <text x="24" y="55" font-family="Arial" font-size="7" font-weight="bold" fill="white" text-anchor="middle">!</text>
+</svg></div><div class=\"icon-badge-label\">Professional refs</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <circle cx="20" cy="24" r="9" fill="#f47c20"/>
+  <path d="M6,52 C6,42 14,36 20,36 C26,36 34,42 34,52 L34,58 L6,58 Z" fill="#f47c20"/>
+  <circle cx="60" cy="24" r="9" fill="#0f2156"/>
+  <path d="M46,52 C46,42 54,36 60,36 C66,36 74,42 74,52 L74,58 L46,58 Z" fill="#0f2156"/>
+  <circle cx="40" cy="22" r="8" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <path d="M28,50 C28,41 34,36 40,36 C46,36 52,41 52,50 L52,58 L28,58 Z" fill="#e8edf8" stroke="#0f2156" stroke-width="2"/>
+  <line x1="40" y1="14" x2="40" y2="58" stroke="#f47c20" stroke-width="2" stroke-dasharray="3,3"/>
+</svg></div><div class=\"icon-badge-label\">League - teams drafted</div></div><div class=\"icon-badge\"><div class=\"icon-badge-img\"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="52" height="52">
+  <path d="M40,8 L44,20 L58,20 L47,28 L51,42 L40,34 L29,42 L33,28 L22,20 L36,20 Z" fill="#f47c20"/>
+  <rect x="28" y="58" width="24" height="5" rx="2" fill="#f47c20"/>
+  <rect x="23" y="63" width="34" height="6" rx="3" fill="#0f2156"/>
+  <rect x="36" y="48" width="8" height="12" fill="#0f2156"/>
+  <path d="M18,16 L62,16 L62,46 C62,54 52,60 40,60 C28,60 18,54 18,46 Z" fill="#0f2156" opacity="0.15"/>
+</svg></div><div class=\"icon-badge-label\">Championship + playoffs</div></div>`,
 };
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
@@ -1164,11 +1202,12 @@ const PROG_SCHEDULES = {
       </div>`,
   'mens-bball': `
       <div class="schedule-block">
-        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Mondays & Thursdays — 7:30–8:45pm or 8:45–10:00pm</strong></div></div>
-        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>German School</strong></div></div>
-        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>10 games plus potential playoffs</strong><div class="sched-sub">Season dates announced before registration opens</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Mondays — 2 games</strong><div class="sched-sub">8:00–9:15pm and 9:00–10:15pm</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">🌙</span><div><strong>Wednesdays — 4 games</strong><div class="sched-sub">Two games at 8:00–9:15pm and two at 9:00–10:15pm, on two courts</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📍</span><div><strong>The Armory</strong><div class="sched-sub">Two courts</div></div></div>
+        <div class="schedule-row"><span class="sched-icon">📅</span><div><strong>Starts Monday, Oct 26</strong><div class="sched-sub">73 games: full round robin plus playoffs, through mid-January</div></div></div>
         <div class="schedule-row"><span class="sched-icon">🦺</span><div><strong>Professional referees at every game</strong></div></div>
-        <div class="schedule-note">Teams are formed through a draft before the season begins. Full league standings updated throughout the season.</div>
+        <div class="schedule-note">12 teams of 6, formed through a draft before the season begins. Full league standings updated throughout the season.</div>
       </div>`,
 };
 
@@ -1229,7 +1268,10 @@ function goForm(){
     setMainGradeOptions();
     setJerseyOptions();
     setFormLabels();
+    markRequiredLabels();
     resetChoices();
+    markMissingFields([]);
+    const rs = document.getElementById('reqStatus'); if(rs){ rs.style.display = 'none'; rs.innerHTML = ''; }
     buildCalendar();
   } catch(e){ console.error('goForm error:', e); }
   try{ initStripe(); } catch(e){ console.error('Stripe init error:', e); }
@@ -1264,6 +1306,73 @@ const MTJ = {
 // Whether this program's pay-in-full option gets the 5% discount.
 // Defaults to true unless a program explicitly opts out (payInFullDiscount:false).
 function hasPayInFullDiscount(p){ return p && p.payInFullDiscount !== false; }
+
+// ── REQUIRED FIELDS ───────────────────────────────────────────────────────────
+// Every field on the sign-up form is required. Required labels get a red *,
+// a live "Still needed" line sits above the pay button, and clicking pay with
+// anything missing outlines each missing field in red and lists them.
+function missingRequiredFields(){
+  const adult = selProg && selProg.adult;
+  const val = id => { const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
+  const out = [];
+  const need = (id, label, ok) => { if(!ok) out.push({ id, label }); };
+  need('childFirst', adult ? 'first name' : "child's first name", !!val('childFirst'));
+  need('childLast',  adult ? 'last name'  : "child's last name",  !!val('childLast'));
+  need('parentName', adult ? 'name on the card' : 'parent / guardian name', !!val('parentName'));
+  need('parentEmail', 'a valid email address', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('parentEmail')));
+  need('whatsappNumber', 'a WhatsApp number (at least 10 digits)', val('whatsappNumber').replace(/\D/g, '').length >= 10);
+  need('childGrade', adult ? 'division' : 'grade', !!val('childGrade'));
+  need('jerseySize', 'jersey size', !!val('jerseySize'));
+  if(selProg && selProg.id === 'boys-soccer') need('sessionSelector', 'which session(s)', !!selectedSession);
+  if(typeof busCardVisible === 'function' && busCardVisible()){
+    need('busToggleCard', 'a transportation option', !!busChoice);
+    if(busChoice === 'bus'){
+      need('busPickupAddress', 'bus pickup address', !!val('busPickupAddress'));
+      const same = document.getElementById('busSameDropoff');
+      if(same && !same.checked) need('busDropoffAddress', 'bus drop-off address', !!val('busDropoffAddress'));
+    }
+  }
+  if(selProg && selProg.id === 'boys-bball' && val('childGrade') === '6th Grade') need('bballGroupBox', 'a basketball group', !!bballChoice);
+  if(!selPayment) out.push({ id:'optMonthly', label:'a payment plan' });
+  const pol = document.getElementById('policyCheckbox');
+  if(pol && !pol.checked) out.push({ id:'policyCheckbox', label:'confirming you read the program policies' });
+  return out;
+}
+const CHOICE_IDS = ['sessionSelector','busToggleCard','bballGroupBox','optMonthly'];
+function markMissingFields(missing){
+  document.querySelectorAll('.field-missing').forEach(el => el.classList.remove('field-missing'));
+  document.querySelectorAll('.choice-missing').forEach(el => el.classList.remove('choice-missing'));
+  (missing || []).forEach(m => {
+    const el = document.getElementById(m.id);
+    if(!el) return;
+    if(CHOICE_IDS.includes(m.id)) (m.id === 'optMonthly' ? el.parentElement : el).classList.add('choice-missing');
+    else if(m.id === 'policyCheckbox') el.parentElement.classList.add('choice-missing');
+    else el.classList.add('field-missing');
+  });
+}
+function updateReqStatus(){
+  const box = document.getElementById('reqStatus');
+  if(!box || !selProg) return;
+  const missing = missingRequiredFields();
+  // Only re-outline fields that were already flagged, so the form doesn't
+  // light up red before the family has had a chance to fill anything in.
+  if(document.querySelector('.field-missing,.choice-missing')) markMissingFields(missing);
+  box.style.display = missing.length ? 'block' : 'none';
+  box.innerHTML = missing.length ? '<strong>Still needed:</strong> ' + missing.map(m => m.label).join(', ') : '';
+}
+function markRequiredLabels(){
+  ['childFirst','childLast','parentName','parentEmail','whatsappNumber','childGrade','jerseySize'].forEach(id => {
+    const input = document.getElementById(id);
+    const field = input && input.closest('.field');
+    const label = field && field.querySelector('label');
+    if(label && !label.querySelector('.req-star')) label.insertAdjacentHTML('beforeend', ' <span class="req-star">*</span>');
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const fc = document.getElementById('formContent');
+  if(fc){ fc.addEventListener('input', updateReqStatus); fc.addEventListener('change', updateReqStatus); fc.addEventListener('click', () => setTimeout(updateReqStatus, 0)); }
+});
+
 
 // ── DISCOUNTS ─────────────────────────────────────────────────────────────────
 // A code is either a percentage (SIBLING50, the family code) or a flat dollar
@@ -1468,9 +1577,14 @@ function refreshPayLabel(){
   if(selPayment === 'family'){
     const net = familyNetTotal(), n = familyPaymentsCount();
     lbl.textContent = n > 1 ? `Pay ${fmt(net / n)} — first of ${n} payments` : `Pay ${fmt(net)} — full season`;
-  } else if(selProg.payInFullOnly && selPayment === 'lump'){
-    const t = seasonTotalNow();
-    lbl.textContent = `Pay ${fmt(Math.max(0, t - discountOff(t)))} — full season`;
+  } else if(selPayment === 'monthly' || selPayment === 'lump'){
+    // Use the plan prices shown on screen, which already include any discount,
+    // bus, and Sunday + Wednesday combined pricing.
+    const priceEl = document.getElementById(selPayment === 'monthly' ? 'monthlyPrice' : 'lumpPrice');
+    const price = priceEl ? priceEl.textContent.trim() : '';
+    if(price && price !== '—') lbl.textContent = selPayment === 'monthly'
+      ? `Pay ${price} — First of ${calcPricing(selMonth).inst} payments`
+      : `Pay ${price} — Full season`;
   }
 }
 
@@ -1949,6 +2063,16 @@ async function handlePayment(){
   const grade = document.getElementById('childGrade') ? document.getElementById('childGrade').value : '';
   const jerseySize = document.getElementById('jerseySize') ? document.getElementById('jerseySize').value : '';
   const whatsapp = document.getElementById('whatsappNumber') ? document.getElementById('whatsappNumber').value.trim() : '';
+  const missing = missingRequiredFields();
+  if(missing.length){
+    markMissingFields(missing);
+    document.getElementById('card-errors').textContent = 'Please complete: ' + missing.map(m => m.label).join(', ') + '.';
+    const first = document.getElementById(missing[0].id);
+    if(first){ first.scrollIntoView({behavior:'smooth', block:'center'}); if(first.focus) first.focus({preventScroll:true}); }
+    return;
+  }
+  markMissingFields([]);
+  document.getElementById('card-errors').textContent = '';
   const policyAgreed = document.getElementById('policyCheckbox') && document.getElementById('policyCheckbox').checked;
   if(!policyAgreed){
     document.getElementById('card-errors').textContent='Please confirm you\'ve read the program policies and guidelines before continuing.';
