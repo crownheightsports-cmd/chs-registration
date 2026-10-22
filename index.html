@@ -431,6 +431,9 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
             <button type="button" class="session-btn" id="busChoiceBus" onclick="setBusChoice('bus')">🚌 Bus (+$20/mo)</button>
             <button type="button" class="session-btn" id="busChoiceOwn" onclick="setBusChoice('own')">I will arrange my own transportation</button>
           </div>
+          <div id="busWaivedNote" style="display:none;margin-top:.6rem;background:#fff;border:1.5px dashed #1a8f4a;border-radius:8px;padding:.55rem .75rem;font-size:12px;color:#1a5c1a;line-height:1.55">
+            🎁 <strong>Bus fee waived with the sibling discount.</strong> Your child is signed up for bus transportation at no charge (normally +$20/mo). Please add your pickup address below.
+          </div>
           <div id="busAddressFields" style="display:none;margin-top:.85rem;padding-top:.85rem;border-top:1px solid rgba(26,143,74,.2)">
             <div style="font-size:11px;color:#1a5c1a;margin-bottom:.6rem;line-height:1.6">📍 For safety and route efficiency, kids may be dropped at a nearby corner rather than directly at the door. If you have a corner preference, please include it below — we'll do our best to honor it.</div>
             <div class="field" style="margin-bottom:.6rem">
@@ -1491,9 +1494,12 @@ function resetChoices(){
 
 // ── TOTALS ────────────────────────────────────────────────────────────────────
 function busIsOn(){ const cb = document.getElementById('busToggleInput'); return !!(cb && cb.checked && busCardVisible()); }
+// SIBLING50 waives the bus fee: the child is signed up for the bus at no charge.
+function busWaived(){ return !!(appliedDiscount && appliedDiscount.code === 'SIBLING50' && busCardVisible()); }
+function waivedBusAmount(){ return busWaived() ? BUS_MONTHLY * calcPricing(selMonth).inst : 0; }
 function seasonTotalNow(){
   const pr = calcPricing(selMonth);
-  const bus = busIsOn() ? BUS_MONTHLY * pr.inst : 0;
+  const bus = (busIsOn() && !busWaived()) ? BUS_MONTHLY * pr.inst : 0;
   if(selProg.id === 'boys-soccer' && selectedSession === 'Both'){
     return calcPricingForGames(selProg, selMonth, 36).total + calcPricingForGames(selProg, selMonth, 37).total + bus;
   }
@@ -1504,6 +1510,16 @@ function familyNetTotal(){ const t = seasonTotalNow(); return Math.max(0, t - di
 
 // ── PRICING DISPLAY: program rules layered on top of the base display ────────
 function updatePricingDisplay(){
+  const waived = selProg && selMonth !== null && busWaived();
+  if(waived && busChoice !== 'bus'){
+    busChoice = 'bus';
+    const cb = document.getElementById('busToggleInput'); if(cb) cb.checked = true;
+    toggleBusAddressFields();
+  }
+  const own = document.getElementById('busChoiceOwn'); if(own) own.style.display = waived ? 'none' : '';
+  const busBtn = document.getElementById('busChoiceBus');
+  if(busBtn){ busBtn.classList.toggle('on', busChoice === 'bus'); busBtn.textContent = waived ? '🚌 Bus — fee waived' : '🚌 Bus (+$20/mo)'; }
+  const note = document.getElementById('busWaivedNote'); if(note) note.style.display = waived ? 'block' : 'none';
   updatePricingDisplayBase();
   if(selMonth === null || !selProg) return;
   const grid = document.getElementById('optMonthly').parentElement;
@@ -1559,8 +1575,20 @@ function updatePricingDisplay(){
     const dates = [];
     for(let i = 0; i < n; i++){ const d = new Date(); d.setMonth(d.getMonth() + i); dates.push(d); }
     const fmtD = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const wb = waivedBusAmount();
+    const setT = (id, t) => { const el = document.getElementById(id); if(el) el.textContent = t; };
+    setT('priceNowMain', fmt(net));
+    setT('priceNowDetail', 'Total due after ' + appliedDiscount.code + (n > 1 ? ` · ${n} monthly payments of ${fmt(each)}` : ' · one payment'));
+    setT('priceNowTotal', wb ? 'Includes bus transportation — fee waived' : '');
+    const bk = document.getElementById('breakdownBox');
+    if(bk && wb){
+      bk.innerHTML = `<div class="bkd-row"><span>${selProg.name}</span><span>${fmt(total)}</span></div>` +
+        `<div class="bkd-row bus"><span>Bus transportation (${calcPricing(selMonth).inst} months) — <strong>waived with sibling discount</strong></span><span><s>${fmt(wb)}</s> $0.00</span></div>` +
+        `<div class="bkd-row"><span>Season total</span><span>${fmt(total)}</span></div>`;
+    }
     document.getElementById('familyPlanSummary').innerHTML =
       `<div style="display:flex;justify-content:space-between"><span>${selProg.name} season total</span><span>${fmt(total)}</span></div>` +
+      (wb ? `<div style="display:flex;justify-content:space-between;color:#1a8f4a"><span>🚌 Bus transportation — waived (sibling discount)</span><span><s style="color:#6b6b60">${fmt(wb)}</s> $0.00</span></div>` : '') +
       `<div style="display:flex;justify-content:space-between;color:#1a8f4a"><span>${appliedDiscount.code} (${discountLabel()})</span><span>−${fmt(total - net)}</span></div>` +
       `<div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:1px solid #b8dfc6;margin-top:4px;padding-top:4px"><span>Total due</span><span>${fmt(net)}</span></div>` +
       `<div style="margin-top:.5rem;font-weight:600">${n > 1 ? `${n} monthly payments of ${fmt(each)}:` : 'One payment today:'}</div>` +
@@ -1637,6 +1665,7 @@ function regMetadata(f, extra){
     transportation: busCardVisible() ? (busIsOn() ? 'Bus' : 'Own transportation') : 'n/a',
   };
   if(busIsOn()){ md.bus_pickup_address = f.busPickupAddress || ''; md.bus_dropoff_address = f.busDropoffAddress || ''; }
+  if(busWaived()) md.bus_fee_waived = 'yes (sibling discount)';
   if(selProg.id === 'boys-bball' && bballGroupLabel()) md.bball_group = bballGroupLabel();
   if(appliedDiscount){
     md.discount_code = appliedDiscount.code;
@@ -1678,7 +1707,8 @@ async function handleFamilyPayment(f){
     const each = fmt(net / n);
     showRegistrationSuccess(f,
       `Welcome, ${f.childFirst}! 🎉<br>A confirmation will be sent to <strong>${f.email}</strong>.<br><br>` +
-      (n > 1 ? `Your first payment of ${each} is processed. The remaining ${n - 1} monthly payment${n - 1 !== 1 ? 's' : ''} of ${each} will be charged automatically.` : `Your full season payment of ${fmt(net)} is confirmed.`),
+      (n > 1 ? `Your first payment of ${each} is processed. The remaining ${n - 1} monthly payment${n - 1 !== 1 ? 's' : ''} of ${each} will be charged automatically.` : `Your full season payment of ${fmt(net)} is confirmed.`) +
+      (busWaived() ? `<br><br>🚌 Your child is signed up for bus transportation — the bus fee is waived with the sibling discount.` : ''),
       n > 1 ? `${each} (first of ${n} payments)` : `${fmt(net)} (paid in full)`,
       n > 1 ? `Custom plan — ${n} monthly payments` : 'Paid in full');
   }catch(err){
