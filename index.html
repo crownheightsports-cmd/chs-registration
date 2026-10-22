@@ -467,7 +467,7 @@ input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(26,58,143,.1)
             </button>
           </div>
  <div id="familyPlanBox" style="display:none;margin-top:.75rem;background:#f0faf4;border:1.5px solid #1a8f4a;border-radius:10px;padding:.85rem 1rem">
-            <div style="font-size:13px;font-weight:700;color:#1a5c1a;margin-bottom:.5rem">Family plan — choose how you'd like to pay</div>
+            <div style="font-size:13px;font-weight:700;color:#1a5c1a;margin-bottom:.5rem" id="familyPlanTitle">Your total &amp; payment plan</div>
             <label style="font-size:12px;color:#1a5c1a">Number of payments
               <select id="familyPayments" onchange="updatePricingDisplay()" style="margin-left:6px;padding:6px 10px;border:1px solid #1a8f4a;border-radius:6px;font-family:'DM Sans',sans-serif"></select>
             </label>
@@ -1509,7 +1509,7 @@ function updatePricingDisplay(){
   const grid = document.getElementById('optMonthly').parentElement;
   const famBox = document.getElementById('familyPlanBox');
   const optM = document.getElementById('optMonthly'), optL = document.getElementById('optLump');
-  const fam = !!(appliedDiscount && appliedDiscount.family);
+  const fam = !!(appliedDiscount && (appliedDiscount.family || appliedDiscount.flexible));
 
   if(selProg.adult && !selProg.payInFullOnly){
     const pr = calcPricing(selMonth);
@@ -1545,14 +1545,26 @@ function updatePricingDisplay(){
     grid.style.display = 'none';
     famBox.style.display = 'block';
     const sel = document.getElementById('familyPayments');
-    if(!sel.options.length){
-      for(let n = 1; n <= 12; n++) sel.add(new Option(n === 1 ? '1 (pay in full)' : n + ' monthly payments', String(n)));
-      sel.value = selProg.payInFullOnly ? '1' : String(Math.min(12, calcPricing(selMonth).inst || 1));
+    // Family code: up to 12 payments. Other flexible codes: up to the months left in the program.
+    const maxN = appliedDiscount.family ? 12 : Math.max(1, calcPricing(selMonth).inst || 1);
+    if(sel.options.length !== maxN || sel.dataset.prog !== selProg.id){
+      const prev = parseInt(sel.value, 10);
+      sel.innerHTML = '';
+      for(let n = 1; n <= maxN; n++) sel.add(new Option(n === 1 ? '1 payment (pay in full)' : n + ' monthly payments', String(n)));
+      sel.value = String(prev >= 1 && prev <= maxN ? prev : Math.min(maxN, calcPricing(selMonth).inst || 1));
+      sel.dataset.prog = selProg.id;
     }
     const total = seasonTotalNow(), net = familyNetTotal(), n = familyPaymentsCount();
+    const each = net / n;
+    const dates = [];
+    for(let i = 0; i < n; i++){ const d = new Date(); d.setMonth(d.getMonth() + i); dates.push(d); }
+    const fmtD = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     document.getElementById('familyPlanSummary').innerHTML =
-      `Season total ${fmt(total)} − ${discountLabel()} = <strong>${fmt(net)}</strong>` +
-      (n > 1 ? ` · ${n} monthly payments of <strong>${fmt(net / n)}</strong>` : ' · one payment');
+      `<div style="display:flex;justify-content:space-between"><span>${selProg.name} season total</span><span>${fmt(total)}</span></div>` +
+      `<div style="display:flex;justify-content:space-between;color:#1a8f4a"><span>${appliedDiscount.code} (${discountLabel()})</span><span>−${fmt(total - net)}</span></div>` +
+      `<div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:1px solid #b8dfc6;margin-top:4px;padding-top:4px"><span>Total due</span><span>${fmt(net)}</span></div>` +
+      `<div style="margin-top:.5rem;font-weight:600">${n > 1 ? `${n} monthly payments of ${fmt(each)}:` : 'One payment today:'}</div>` +
+      `<div style="font-size:12px;line-height:1.7">${dates.map((d, i) => `${i === 0 ? 'Today' : fmtD(d)} — ${fmt(each)}`).join('<br>')}</div>`;
     selectPayment('family');
   } else {
     grid.style.display = '';
@@ -1647,16 +1659,16 @@ function payBtnBusy(){
 // ── FAMILY CODE: custom number of payments ───────────────────────────────────
 async function handleFamilyPayment(f){
   const net = familyNetTotal(), n = familyPaymentsCount();
-  const md = regMetadata(f, { plan_type: 'family', remaining_payments: n, family_total: net.toFixed(2) });
+  const md = regMetadata(f, { plan_type: 'family', remaining_payments: n, family_total: net.toFixed(2), custom_plan: 'yes' });
   try{
     let res;
     if(n === 1){
       res = await fetch('/.netlify/functions/create-payment-intent', { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ amount: Math.round(net * 100), description: `CHS ${selProg.name} — ${f.childFirst} ${f.childLast} — family plan`, receipt_email: f.email, metadata: md }) });
+        body: JSON.stringify({ amount: Math.round(net * 100), description: `CHS ${selProg.name} — ${f.childFirst} ${f.childLast} — paid in full (${appliedDiscount.code})`, receipt_email: f.email, metadata: md }) });
     } else {
       res = await fetch('/.netlify/functions/create-subscription', { method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ email: f.email, name: f.parentName, monthlyAmount: Math.round(net * 100 / n),
-          description: `CHS ${selProg.name} — ${f.childFirst} ${f.childLast} (family plan)`, totalPayments: n, metadata: md }) });
+          description: `CHS ${selProg.name} — ${f.childFirst} ${f.childLast} (${n}-payment plan, ${appliedDiscount.code})`, totalPayments: n, metadata: md }) });
     }
     const pi = await res.json();
     if(pi.error) throw new Error(pi.error);
@@ -1668,7 +1680,7 @@ async function handleFamilyPayment(f){
       `Welcome, ${f.childFirst}! 🎉<br>A confirmation will be sent to <strong>${f.email}</strong>.<br><br>` +
       (n > 1 ? `Your first payment of ${each} is processed. The remaining ${n - 1} monthly payment${n - 1 !== 1 ? 's' : ''} of ${each} will be charged automatically.` : `Your full season payment of ${fmt(net)} is confirmed.`),
       n > 1 ? `${each} (first of ${n} payments)` : `${fmt(net)} (paid in full)`,
-      n > 1 ? `Family plan — ${n} payments` : 'Family plan — paid in full');
+      n > 1 ? `Custom plan — ${n} monthly payments` : 'Paid in full');
   }catch(err){
     document.getElementById('card-errors').textContent = err.message || 'Payment failed. Please try again.';
     payBtnReset();
@@ -1990,9 +2002,12 @@ async function applyDiscountCode(){
       msgEl.style.color = '#1a8f4a';
     } else {
       appliedScholarship = null;
-      appliedDiscount = { code: code.toUpperCase(), amount: data.discountAmount || 0, percent: data.discountPercent || 0, family: !!data.family };
-      msgEl.textContent = data.family
-        ? `✓ Family code applied — ${discountLabel()}. Choose your payment plan below.`
+      appliedDiscount = { code: code.toUpperCase(), amount: data.discountAmount || 0, percent: data.discountPercent || 0, family: !!data.family,
+        // SIBLING50 is sometimes deployed before the server knows about flexible plans — treat it as flexible either way.
+        flexible: !!(data.family || data.flexiblePlan || code.trim().toUpperCase() === 'SIBLING50') };
+      if(code.trim().toUpperCase() === 'SIBLING50' && !appliedDiscount.percent){ appliedDiscount.percent = 50; appliedDiscount.amount = 0; }
+      msgEl.textContent = appliedDiscount.flexible
+        ? `✓ ${data.family ? 'Family code' : appliedDiscount.code} applied — ${discountLabel()}. Your total and payment plan are below.`
         : `✓ ${discountLabel()} applied (${data.usesRemaining} use${data.usesRemaining!==1?'s':''} left on this code for your email).`;
       msgEl.style.color = '#1a8f4a';
     }
