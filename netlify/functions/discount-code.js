@@ -1,7 +1,14 @@
 import { getStore } from '@netlify/blobs';
 
-// Regular discount codes: CODE -> dollar amount off.
-const VALID_CODES = { 'SIBLING50': 50 };
+// Regular discount codes. { percent } takes a percentage off; { amount } takes
+// a flat dollar amount off. SIBLING50 is 50% off (it was mistakenly $50 before).
+// flexiblePlan: the family sees their total due and picks how many monthly payments.
+const VALID_CODES = { 'SIBLING50': { percent: 50, flexiblePlan: true } };
+
+// Family code: 50% off, unlimited uses, and the family picks any number of
+// payments at checkout. Kept here on the server only — it never appears in
+// the public page source. To change it, edit this line.
+const FAMILY_CODES = { 'CHSFAM-FUQ2A': { percent: 50 } };
 
 // Scholarship codes: CODE -> donor name. These don't discount a price —
 // they mark a registration as fully donor-covered ($0 charged). Unlike a
@@ -33,6 +40,10 @@ export default async (req) => {
       return new Response(JSON.stringify({ error: 'Missing code or email' }), { status: 400, headers });
     }
 
+    const isFamily = Object.prototype.hasOwnProperty.call(FAMILY_CODES, code);
+    if (isFamily) {
+      return new Response(JSON.stringify({ valid: true, type: 'discount', family: true, flexiblePlan: true, discountPercent: FAMILY_CODES[code].percent, discountAmount: 0, usesRemaining: 999 }), { status: 200, headers });
+    }
     const isDiscount = Object.prototype.hasOwnProperty.call(VALID_CODES, code);
     const isScholarship = Object.prototype.hasOwnProperty.call(SCHOLARSHIP_CODES, code);
     if (!isDiscount && !isScholarship) {
@@ -44,7 +55,7 @@ export default async (req) => {
 
     const buildResult = (usesRemaining) => isScholarship
       ? { valid: true, type: 'scholarship', donorName: SCHOLARSHIP_CODES[code], usesRemaining }
-      : { valid: true, type: 'discount', discountAmount: VALID_CODES[code], usesRemaining };
+      : { valid: true, type: 'discount', discountAmount: VALID_CODES[code].amount || 0, discountPercent: VALID_CODES[code].percent || 0, flexiblePlan: !!VALID_CODES[code].flexiblePlan, usesRemaining };
 
     if (action === 'redeem') {
       const data = (await store.get('usage', { type: 'json' })) || {};
